@@ -1,0 +1,5 @@
+# large data files
+*/*_large_data_files
+
+# R Environment Variables
+.DS_Store
