@@ -211,6 +211,10 @@ mtVar.bulk.df <- mtVar.bulk.df %>% mutate(occurrence = case_when(variant %in% c(
                                                                  variant %in% mtVar_parental ~ "Parental",
                                                                  variant %in% mtVar_POLG_sahred ~ "POLG-sahred"))
 
+write.csv(mtVar.bulk.df, file = "../output/2_mtVar.bulk.meta.csv", 
+          quote = FALSE, row.names = TRUE)
+
+
 p4 <- mtVar.bulk.df %>% ggplot(aes(x = condition, y = mean)) +
   geom_violin(aes(fill = condition), width = 0.7) + geom_boxplot(width=0.1) + theme_classic() + 
   scale_fill_manual(values = color_vec) + scale_y_log10(limits = c(5e-5,1), breaks = 10^(-5:0)) + Seurat::NoLegend()
