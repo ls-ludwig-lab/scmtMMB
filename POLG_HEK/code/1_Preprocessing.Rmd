@@ -253,6 +253,7 @@ sessionInfo()
 ```{r, echo=FALSE, eval=FALSE}
 # save RDS file
 saveRDS(HEK, "../POLG_HEK_large_data_files/output/1_POLG_HEK_preprocesssed_seurat.rds")
-write.csv(HEK@meta.data, file = "../output/1_HEK_metadata.csv", 
+HEK.metadata <- cbind(HEK@meta.data, HEK@reductions$atac.umap@cell.embeddings)
+write.csv(HEK.metadata, file = "../output/1_HEK_metadata.csv", 
           quote = FALSE, row.names = TRUE, col.names = TRUE)
 ```
