@@ -1,30 +1,258 @@
 ---
 title: "POLG HEK cell lines - mtscATAC Preprocessing"
 author: "Yu-Hsin Josch Hsieh"
-date: "`r Sys.Date()`"
-output: html_document
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document:
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+setwd("~/Ludwig_lab/scmtMMB/POLG_HEK/code")
 ```
 
-## R Markdown
+Here, we are analyzing the mtscATAC-seq dataset of contrl and POLG D274A knock-in HEK cell lines. Both knock-in clones (KI36 and KIA2) carry the D274A mutation in POLG, which was introduced using CRISPR-Cas9 and homology-directed repair technology. In addition, the KIA2 clone also carries an inducible mitochondria-targeted restriction enzyme, mitoEagI, under the control of a Tet-on promoter (not induced in our experiment). Briefly, after trypsinization three cell lines were stained with Totalseq-A Hashtag antibodies (A0251, A0252, A0253 for CTRL, KI36 and KIA2, respectively). Cells were then pooled at 1:1:1 ratio, FACS-srted on live cells, and subjected to mtscATAC-seq protocol using 10X Genomics single cell ATAC v1.1 kit.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Load packages and genome annotation
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r packages, message=FALSE, warning=FALSE}
+library(Matrix)
+library(Seurat)
+library(Signac)
+library(data.table)
+library(dplyr)
+library(EnsDb.Hsapiens.v86)
+library(SummarizedExperiment)
+library(ggplot2)
+set.seed(123)
+'%ni%' <- Negate('%in%')
+suppressWarnings(annotations <- GetGRangesFromEnsDb(ensdb = EnsDb.Hsapiens.v86))
+seqlevelsStyle(annotations) <- 'UCSC'
+genome(annotations) <- "hg38"
 ```
 
-## Including Plots
+## Setup the Seurat Object
 
-You can also embed plots, for example:
+```{r HEK, message=FALSE, warning=FALSE}
+counts <-  Read10X_h5(filename = "../POLG_HEK_large_data_files/input/cellranger/filtered_peak_bc_matrix.h5")
+fragpath <- "../POLG_HEK_large_data_files/input/cellranger/fragments.tsv.gz"
+metadata <- read.csv(file="../POLG_HEK_large_data_files/input/cellranger/singlecell.csv", header = TRUE, row.names = 1)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# Create ChromatinAssay for ATAC data
+atac_assay <- CreateChromatinAssay( 
+  counts = counts,
+  sep = c(":", "-"),
+  genome = 'hg38',
+  fragments = fragpath,
+  annotation = annotations)
+
+# Create Seurat sbject
+HEK <- CreateSeuratObject(counts = atac_assay,assay = 'ATAC', meta.data = metadata)
+rm(counts, atac_assay, metadata)
+HEK
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Quality Control
+
+The following QC metrics are determined and visualized: (1) Nucleosome banding pattern, (2) Transcriptional start site (TSS) enrichment score, (3) Total number of fragments in peaks, (4) Fraction of fragments in peaks and (5) mitochondrial DNA depth.
+
+```{r QC, message=FALSE, warning=FALSE}
+# nucleus genome ATAC QC
+HEK$pct_reads_in_peaks <- HEK$peak_region_fragments / HEK$passed_filters * 100
+HEK <- TSSEnrichment(HEK, fast = F)
+HEK <- NucleosomeSignal(HEK)
+HEK$log10_nCount_ATAC <- log10(HEK$nCount_ATAC)
+
+# load mitochondrial data
+mito.SE <- readRDS("../POLG_HEK_large_data_files/input/mgatk/mgatk.rds")[,Cells(HEK)]
+HEK$mtDNA_depth <- mito.SE$depth
+# refallele <- data.frame(pos = 1:16569, as.data.frame(rowData(mito.SE)))
+HEK$log10_mtDNA_depth <- log10(HEK$mtDNA_depth)
+rm(mito.SE)
+```
+
+```{r, fig.width=15, fig.height=5, fig.fullwidth=TRUE}
+par(mar = c(4, 4, .1, .2))
+# visulize QC metrics 
+VlnPlot(object = HEK,
+           feature = c("TSS.enrichment",
+                    "nucleosome_signal",
+                    "pct_reads_in_peaks",
+                    "nCount_ATAC",
+                    "log10_mtDNA_depth"), pt.size = 0, ncol = 5)
+```
+
+## Demultiplexing with hashtag oligos (HTOs)
+
+```{r HTO Demultiplexing, message=FALSE, warning=FALSE}
+
+# Import HTO
+import_hto<- function(){
+  mtx <- fread(paste0("../POLG_HEK_large_data_files/input/featurecounts/featurecounts.mtx"), header = FALSE)
+  dim <- mtx[1,]
+  mtx <- mtx[-1,]
+  matx <- Matrix::sparseMatrix(i = mtx[[1]], j = mtx[[2]], x = mtx[[3]])
+  rownames(matx) <- fread(paste0("../POLG_HEK_large_data_files/input/featurecounts/featurecounts.barcodes.txt"), header = FALSE)[[1]]
+  colnames(matx) <- paste0(fread(paste0("../POLG_HEK_large_data_files/input/featurecounts/featurecounts.genes.txt"), header = FALSE)[[1]])
+  return(t(matx))
+}
+
+hto <- import_hto()
+colnames(hto) <- paste0(colnames(hto), "-1")
+hto <-hto[,Cells(HEK)]
+HEK[["HTO"]] <- CreateAssayObject(hto[,Cells(HEK)])
+
+# Normalize HTO data, here we use centered log-ratio (CLR) transformation
+HEK <- NormalizeData(HEK, assay = "HTO", normalization.method = "CLR")
+HEK <- HTODemux(HEK, assay = "HTO", positive.quantile = 0.8)
+```
+
+```{r, class.source = 'fold-show'}
+# Global classification results
+table(HEK$hash.ID)
+```
+
+```{r, message=FALSE, fig.width=15, fig.height=5, fig.fullwidth=TRUE}
+# Visualize enrichment for selected HTOs with ridge plots
+color_vec <- c("CTRL" = "#2780FF", "KI36" = "#960096", "KIA2" = "#000090")
+HEK$hash.ID <- factor(HEK$hash.ID, levels = c("CTRL", "KI36", "KIA2", "Negative","Doublet"))
+Idents(HEK) <- "hash.ID"
+p1 <- RidgePlot(HEK, assay = "HTO", features = rownames(HEK[["HTO"]])[1:3], ncol = 3, cols = c(color_vec, "Doublet" = "black", "Negative" = "grey"))
+p1
+ggsave(plot = p1, "../plot/11_HTO_demultiplex.pdf", width = 12, height = 4)
+v```
+
+```{r, echo=FALSE, eval=FALSE}
+p1 <- RidgePlot(HEK, assay = "HTO", features = rownames(HEK[["HTO"]])[1:3], ncol = 3, cols = c(color_vec, "Doublet" = "black", "Negative" = "grey"))
+ggsave(plot = p1, "../plot/10_HTO_demultiplex.pdf", width = 12, height = 4)
+```
+
+```{r, fig.width=15, fig.height=5, fig.fullwidth=TRUE}
+par(mar = c(4, 4, .1, .2))
+# visulize QC metrics 
+VlnPlot(object = HEK,
+        feature = c("TSS.enrichment",
+                    "nucleosome_signal",
+                    "pct_reads_in_peaks",
+                    "nCount_ATAC",
+                    "log10_mtDNA_depth"),
+        pt.size = 0, ncol = 5, cols = c(color_vec, "Doublet" = "black", "Negative" = "grey"))
+```
+
+# QC filtering
+
+The following parameter were used to remove low quality cells : (1) peaks counts less than 1000 or more than 20,000. (2) Fraction of fragments in peaks less than 15%, (3) nucleosome signal more than 4, (4) TSS enrichment score less than 2.5. Lastly, given the control cell line have overall lower mitochondrial DNA depth, here we only filter out cell with mitochondrial DNA depth less than 5
+
+```{r, fig.width=15, fig.height=5, fig.fullwidth=TRUE}
+par(mar = c(4, 4, .1, .2))
+HEK <- subset(
+  x = HEK,
+  subset = nCount_ATAC > 1000 & nCount_ATAC < 20000 &
+    pct_reads_in_peaks > 15 &
+    nucleosome_signal < 4 &
+    TSS.enrichment > 2.5 &
+    mtDNA_depth > 5)
+
+HEK
+
+VlnPlot(object = HEK,
+        feature = c("TSS.enrichment",
+                    "nucleosome_signal",
+                    "pct_reads_in_peaks",
+                    "nCount_ATAC",
+                    "log10_mtDNA_depth"),
+        pt.size = 0.01, ncol = 5, cols = c(color_vec, "Doublet" = "black", "Negative" = "grey"))
+
+```
+
+## Latent semantic indexing (LSI): Normalization (TF-IDF) followed by linear dimensional reduction (SVD)
+
+```{r TF-IDF, message=FALSE, warning=FALSE, class.source = 'fold-show'}
+set.seed(123)
+DefaultAssay(HEK) <- "ATAC"
+HEK <- RunTFIDF(HEK) # term frequency-inverse document frequency
+HEK <- FindTopFeatures(HEK, min.cutoff = 'q0')
+HEK <- RunSVD(HEK) # singular value decomposition
+```
+
+## Non-linear dimension reduction and clustering
+
+The first LSI component often captures sequencing depth (technical variation) rather than biological variation.Thus the component is removed from downstream analysis.
+
+```{r UMAP, message=FALSE, warning=FALSE, class.source = 'fold-show'}
+set.seed(123)
+HEK <- RunUMAP(object = HEK, reduction = 'lsi', dims = 2:30, reduction.name = "atac.umap", reduction.key = "atacUMAP_")
+HEK <- FindNeighbors(object = HEK, reduction = 'lsi', dims = 2:30)
+HEK <- FindClusters(object = HEK, verbose = FALSE, algorithm = 3)
+```
+
+## Visulize cluster
+
+```{r,  fig.width=5.5, fig.height=5}
+par(mar = c(4, 4, .1, .1))
+DimPlot(object = HEK, group.by = "hash.ID", cols = c(color_vec, "Doublet" = "black", "Negative" = "grey")) 
+DimPlot(object = HEK, label = TRUE) 
+```
+
+## Refine cell assignment
+
+As shown on UMAP, these three cell lines are separated into distinct clusters with the KI36 lines being further separated into three sub-clusters based on the UMAP embedding of the chromatin accessibility data. Therefore, the hashtag negative cells were re-assigned based on the clustering (i.e. CTRL:C1, C6; KI36:C3, C4,C5,C7; KIA2:C0, C2). Doublet identified by de-multiplexing were removed.
+
+```{r, class.source = 'fold-show', fig.width=5.5, fig.height=5}
+HEK <- subset(HEK, hash.ID != "Doublet")
+HEK$condition <- data.frame(hash.ID = HEK$hash.ID, seurat_clusters = HEK$seurat_clusters) %>% 
+                 reframe(condition = case_when(HEK$hash.ID == "CTRL" & HEK$seurat_clusters %in% c(1,6) ~ "CTRL",
+                                         HEK$hash.ID == "KI36" & HEK$seurat_clusters %in% c(3,4,5,7) ~ "KI36",
+                                         HEK$hash.ID == "KIA2" & HEK$seurat_clusters %in% c(0,2) ~ "KIA2",
+                                         HEK$hash.ID == "Negative" & HEK$seurat_clusters %in% c(1,6) ~ "CTRL",
+                                         HEK$hash.ID == "Negative" & HEK$seurat_clusters %in% c(3,4,5,7) ~ "KI36",
+                                         HEK$hash.ID == "Negative" & HEK$seurat_clusters %in% c(0,2) ~ "KIA2",
+                                         TRUE ~ "conflicted")) %>% pull(condition)
+
+HEK <- subset(HEK, condition != "conflicted")
+Idents(HEK) <- "condition"
+levels(HEK) <- c("CTRL", "KI36", "KIA2")
+table(Idents(HEK))
+DimPlot(object = HEK, cols = color_vec) 
+```
+
+```{r, echo=FALSE, eval=FALSE}
+p2 <- DimPlot(object = HEK, cols = color_vec) + theme_void() + NoLegend()
+ggsave(plot = p2, "../plot/12_UMAP.pdf", width = 5, height = 5)
+```
+
+```{r, fig.width=15, fig.height=5, fig.fullwidth=TRUE}
+par(mar = c(4, 4, .1, .2))
+VlnPlot(object = HEK,
+        feature = c("TSS.enrichment",
+                    "nucleosome_signal",
+                    "pct_reads_in_peaks",
+                    "nCount_ATAC",
+                    "log10_mtDNA_depth"),
+        pt.size = 0, ncol = 5, cols = color_vec)
+```
+```{r, include=FALSE}
+p4 <- VlnPlot(object = HEK,
+        feature = c("TSS.enrichment",
+                    "nucleosome_signal",
+                    "pct_reads_in_peaks",
+                    "nCount_ATAC",
+                    "log10_mtDNA_depth"),
+        pt.size = 0, ncol = 5, cols = color_vec)
+
+ggsave(plot = p4, "../plot/13_QC_filtered.pdf", width = 15, height = 4)
+```
+
+## R SessionInfo
+```{r, message=FALSE, warning=FALSE}
+sessionInfo()
+```
+
+
+```{r, echo=FALSE, eval=FALSE}
+# save RDS file
+saveRDS(HEK, "../POLG_HEK_large_data_files/output/1_POLG_HEK_preprocesssed_seurat.rds")
+write.csv(HEK@meta.data, file = "../output/1_HEK_metadata.csv", 
+          quote = FALSE, row.names = TRUE, col.names = TRUE)
+```
