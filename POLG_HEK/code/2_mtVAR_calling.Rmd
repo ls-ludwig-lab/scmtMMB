@@ -35,7 +35,7 @@ library(rstatix)
 
 ```{r ATAC data loading, message=FALSE, warning=FALSE}
 # Load the seurat object
-HEK <- readRDS("../POLG_HEK_large_data_files/output/11_POLG_HEK_preprocesssed_seurat.rds")
+HEK <- readRDS("../POLG_HEK_large_data_files/output/1_POLG_HEK_preprocesssed_seurat.rds")
 color_vec <- c("CTRL" = "#2780FF", "KI36" = "#960096", "KIA2" = "#000090")
 
 # extract cell barcodes for each line
