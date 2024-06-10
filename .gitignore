@@ -3,3 +3,6 @@
 
 # R Environment Variables
 .DS_Store
+
+# History files
+*/*/.Rhistory
