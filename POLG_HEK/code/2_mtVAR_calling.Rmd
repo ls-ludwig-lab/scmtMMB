@@ -24,7 +24,6 @@ library(Signac)
 library(dplyr)
 library(SummarizedExperiment)
 library(ggplot2)
-library(viridis)
 library(tibble)
 library(ggpubr)
 library(rstatix)
@@ -61,9 +60,9 @@ mitoSE.KIA2 <- mito.SE[,KIA2_CB]
 saveRDS(cov_per_pos_cell[,CTRL_CB], "../POLG_HEK_large_data_files/output/2_mtDNA_pos_coverage.CTRL.rds")
 saveRDS(cov_per_pos_cell[,KI36_CB], "../POLG_HEK_large_data_files/output/2_mtDNA_pos_coverage.KI36.rds")
 saveRDS(cov_per_pos_cell[,KIA2_CB], "../POLG_HEK_large_data_files/output/2_mtDNA_pos_coverage.KIA2.rds")
-saveRDS(mitoSE.CTRL, "../POLG_HEK_large_data_files/output/02_mgatk.CTRL.rds")
-saveRDS(mitoSE.KI36, "../POLG_HEK_large_data_files/output/02_mgatk.KI36.rds")
-saveRDS(mitoSE.KIA2, "../POLG_HEK_large_data_files/output/02_mgatk.KIA2.rds")
+saveRDS(mitoSE.CTRL, "../POLG_HEK_large_data_files/output/2_mgatk.CTRL.rds")
+saveRDS(mitoSE.KI36, "../POLG_HEK_large_data_files/output/2_mgatk.KI36.rds")
+saveRDS(mitoSE.KIA2, "../POLG_HEK_large_data_files/output/2_mgatk.KIA2.rds")
 ```
 
 ## Visualize position-wise mitochondral genome coverage
