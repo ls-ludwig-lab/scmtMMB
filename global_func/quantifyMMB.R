@@ -119,7 +119,7 @@ quantify_MMB_psedobulk <- function(mmat, cov_per_pos_cell, SampleID){
     Mut_MB_psedobulk <- mtMut_counts_gene_psedobulk / mtCov_gene_psedobulk * 1e6
     Mut_copy_psedobulk <- mtMut_counts_gene_psedobulk / mtCopy_gene_psedobulk
     
-    data.frame(barcode = "psedobulk",
+    data.frame(barcode = "pseudobulk",
                sample = SampleID, symbol = symbol, 
                coverage = mtCov_gene_psedobulk, copy_number_abs = mtCopy_gene_psedobulk, 
                mutation_counts = mtMut_counts_gene_psedobulk,
