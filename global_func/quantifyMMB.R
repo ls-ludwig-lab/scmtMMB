@@ -95,7 +95,7 @@ quantify_MMB_psedobulk <- function(mmat, cov_per_pos_cell, SampleID){
   MSS <- sum(var_meta$MLC_pos_score)
   MSS_weighted <- sum(var_meta$MLC_pos_score * var_meta$mean)
   
-  df1 <- data.frame(barcode = "psedobulk",
+  df1 <- data.frame(barcode = "pseudobulk",
                     sample = SampleID, symbol = "Total", 
                     coverage = mtCov_psedobulk, copy_number_abs = mtCopy_psedobulk, mutation_counts = mtMut_psedobulk,
                     mutation_per_MB = Mut_MB_psedobulk, mutation_per_copy = Mut_copy_psedobulk,
