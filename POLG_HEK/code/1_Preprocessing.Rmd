@@ -121,11 +121,6 @@ Idents(HEK) <- "hash.ID"
 p1 <- RidgePlot(HEK, assay = "HTO", features = rownames(HEK[["HTO"]])[1:3], ncol = 3, cols = c(color_vec, "Doublet" = "black", "Negative" = "grey"))
 p1
 ggsave(plot = p1, "../plot/11_HTO_demultiplex.pdf", width = 12, height = 4)
-v```
-
-```{r, echo=FALSE, eval=FALSE}
-p1 <- RidgePlot(HEK, assay = "HTO", features = rownames(HEK[["HTO"]])[1:3], ncol = 3, cols = c(color_vec, "Doublet" = "black", "Negative" = "grey"))
-ggsave(plot = p1, "../plot/10_HTO_demultiplex.pdf", width = 12, height = 4)
 ```
 
 ```{r, fig.width=15, fig.height=5, fig.fullwidth=TRUE}
@@ -200,14 +195,11 @@ DimPlot(object = HEK, label = TRUE)
 As shown on UMAP, these three cell lines are separated into distinct clusters with the KI36 lines being further separated into three sub-clusters based on the UMAP embedding of the chromatin accessibility data. Therefore, the hashtag negative cells were re-assigned based on the clustering (i.e. CTRL:C1, C6; KI36:C3, C4,C5,C7; KIA2:C0, C2). Doublet identified by de-multiplexing were removed.
 
 ```{r, class.source = 'fold-show', fig.width=5.5, fig.height=5}
-HEK <- subset(HEK, hash.ID != "Doublet")
+HEK <- subset(HEK, hash.ID != "Doublet" & hash.ID != "Negative")
 HEK$condition <- data.frame(hash.ID = HEK$hash.ID, seurat_clusters = HEK$seurat_clusters) %>% 
                  reframe(condition = case_when(HEK$hash.ID == "CTRL" & HEK$seurat_clusters %in% c(1,6) ~ "CTRL",
                                          HEK$hash.ID == "KI36" & HEK$seurat_clusters %in% c(3,4,5,7) ~ "KI36",
                                          HEK$hash.ID == "KIA2" & HEK$seurat_clusters %in% c(0,2) ~ "KIA2",
-                                         HEK$hash.ID == "Negative" & HEK$seurat_clusters %in% c(1,6) ~ "CTRL",
-                                         HEK$hash.ID == "Negative" & HEK$seurat_clusters %in% c(3,4,5,7) ~ "KI36",
-                                         HEK$hash.ID == "Negative" & HEK$seurat_clusters %in% c(0,2) ~ "KIA2",
                                          TRUE ~ "conflicted")) %>% pull(condition)
 
 HEK <- subset(HEK, condition != "conflicted")
@@ -244,12 +236,6 @@ p4 <- VlnPlot(object = HEK,
 ggsave(plot = p4, "../plot/13_QC_filtered.pdf", width = 15, height = 4)
 ```
 
-## R SessionInfo
-```{r, message=FALSE, warning=FALSE}
-sessionInfo()
-```
-
-
 ```{r, echo=FALSE, eval=FALSE}
 # save RDS file
 saveRDS(HEK, "../POLG_HEK_large_data_files/output/1_POLG_HEK_preprocesssed_seurat.rds")
@@ -257,3 +243,9 @@ HEK.metadata <- cbind(HEK@meta.data, HEK@reductions$atac.umap@cell.embeddings)
 write.csv(HEK.metadata, file = "../output/1_HEK_metadata.csv", 
           quote = FALSE, row.names = TRUE, col.names = TRUE)
 ```
+
+## R SessionInfo
+```{r, message=FALSE, warning=FALSE}
+sessionInfo()
+```
+
