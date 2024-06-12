@@ -65,12 +65,12 @@ MutNum.summary <- as.data.frame(do.call(rbind, psych::describeBy(MutNum_continuo
 
 (p1 <- MutNum.summary %>% ggplot(aes(x = cutoff, y = mean + 1, color = condition)) +
   geom_point() + geom_line() + scale_color_manual(values = color_vec) +
-  # scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.05), add = c(0, 0))) +
+  scale_x_continuous(limits = c(0, 1), expand = expansion(mult = c(0, 0.05), add = c(0, 0))) +
   scale_y_log10(limits = c(1, 600), expand = c(0,0),
                         breaks = c(10, 100, 500),
                         labels = c(10, 100, 500)) +
-  theme_classic() + labs(y = "Mean number of mutation + 1 (log10)"))
-ggsave(plot = p1, "../plot/41_MMB_mean_cutoff_log.pdf", width = 5, height = 4)
+  theme_classic() + labs(y = "Mean count of mutation", x = "Heteroplasmy Thresold") + Seurat::NoLegend())
+ggsave(plot = p1, "../plot/41_MMB_mean_cutoff_log.pdf", width = 3, height = 3)
 ```
 
 

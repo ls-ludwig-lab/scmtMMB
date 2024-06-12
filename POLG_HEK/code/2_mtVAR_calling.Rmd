@@ -203,12 +203,15 @@ Venn <- BioVenn::draw.venn(
 ```{r, echo=FALSE, eval=FALSE}
 mtVar.bulk.df <- do.call(rbind, lapply(list(rowData(mmatMut.CTRL), rowData(mmatMut.KI36), rowData(mmatMut.KIA2)), as_tibble))
 mtVar_shared <- Venn$xyz; mtVar_WT_only <- Venn$x_only; mtVar_KI36_only <- Venn$y_only; mtVar_KIA2_only <- Venn$z_only
-mtVar_parental <- c(Venn$xy_only, Venn$xz_only, Venn$xyz);
+# mtVar_parental <- Venn$xyz; mtVar_WT_sahred <- c(Venn$xy_only, Venn$xz_only)
+mtVar_parental <- c(Venn$xy_only, Venn$xz_only, Venn$xyz)
 mtVar_POLG_sahred <- Venn$yz_only; mtVar_POLG_only <- c(mtVar_KI36_only, mtVar_POLG_sahred, mtVar_KIA2_only)
 
-mtVar.bulk.df <- mtVar.bulk.df %>% mutate(occurrence = case_when(variant %in% c(mtVar_WT_only, mtVar_KI36_only, mtVar_KIA2_only) ~ "Private",
-                                                                 variant %in% mtVar_parental ~ "Parental",
-                                                                 variant %in% mtVar_POLG_sahred ~ "POLG-sahred"))
+mtVar.bulk.df <- mtVar.bulk.df %>% 
+  mutate(occurrence = case_when(variant %in% mtVar_parental ~ "Parental",
+                                variant %in% mtVar_POLG_sahred ~ "POLG-shared",
+                                TRUE ~ "Private")) %>% 
+  mutate(occurrence = factor(occurrence, levels = c("Parental", "WT-shared" ,"POLG-shared","Private")))
 
 write.csv(mtVar.bulk.df, file = "../output/2_mtVar.bulk.meta.csv", 
           quote = FALSE, row.names = TRUE)
@@ -229,13 +232,13 @@ write.csv(stat.test, file = "../output/2_het_stat.test.csv",
           quote = FALSE, row.names = TRUE)
 
 lapply(c("CTRL", "KI36","KIA2"), function(cdt){
-  colors =  c("Parental" = "#7CAAFF", "POLG-sahred" = "#583690","Private" = as.character(color_vec[cdt]))
+  colors =  c("Parental" = "#E8C748", "POLG-shared" = "#583690","Private" = as.character(color_vec[cdt])) #"WT-shared" = "#1066FF"
   p5 <- mtVar.bulk.df %>% filter(condition == cdt) %>% ggplot(aes(x = occurrence, y = mean)) +
   geom_violin(aes(fill = occurrence), width = 0.7) + geom_boxplot(width=0.1) + theme_classic() + 
   scale_fill_manual(values = colors) + scale_y_log10(limits = c(5e-5,1), breaks = 10^(-5:0)) +
   ggtitle(cdt) + Seurat::NoLegend()
   print(p5)
-  ggsave(plot = p5, paste0("../plot/25_heteroplasmy_bulk_occur_",cdt,".pdf"), width = 3, height = 3)
+  ggsave(plot = p5, paste0("../plot/25_heteroplasmy_bulk_occur_",cdt,".pdf"), width = 4, height = 3)
 })
 
 stat.test.occu <- mtVar.bulk.df %>% select(condition, occurrence, mean) %>% 
@@ -247,7 +250,7 @@ stat.test.occu
 write.csv(stat.test.occu, file = "../output/2_het_stat.test.occu.csv", 
           quote = FALSE, row.names = TRUE)
 
-lapply(c("Parental", "Private","POLG-sahred"), function(occu){
+lapply(c("Parental", "Private","POLG-shared"), function(occu){
   p6 <- mtVar.bulk.df %>% filter(occurrence == occu) %>% ggplot(aes(x = condition, y = mean)) +
   geom_violin(aes(fill = condition), width = 0.7) + geom_boxplot(width=0.1) + theme_classic() + 
   scale_fill_manual(values = color_vec) + scale_y_log10(limits = c(5e-5,1), breaks = 10^(-5:0)) +

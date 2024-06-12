@@ -32,10 +32,11 @@ library(data.table)
 ```{r data loading, message=FALSE, warning=FALSE}
 # Load the seurat object
 mtVar.bulk.df <- read.csv("../output/2_mtVar.bulk.meta.csv", row.names = "X")
+CTRL_dnV <- mtVar.bulk.df %>% filter(occurrence == "Private" & condition == "CTRL") %>% pull(variant)
 KI36_dnV <- mtVar.bulk.df %>% filter(occurrence != "Parental" & condition == "KI36") %>% pull(variant)
 KIA2_dnV <- mtVar.bulk.df %>% filter(occurrence != "Parental" & condition == "KIA2") %>% pull(variant)
 
-mmat.list <- list(readRDS("../POLG_HEK_large_data_files/output/2_mmtx.CTRL.rds"),
+mmat.list <- list(readRDS("../POLG_HEK_large_data_files/output/2_mmtx.CTRL.rds")[CTRL_dnV,],
                      readRDS("../POLG_HEK_large_data_files/output/2_mmtx.KI36.rds")[KI36_dnV,],
                      readRDS("../POLG_HEK_large_data_files/output/2_mmtx.KIA2.rds")[KIA2_dnV,])
 cov.list <- list(readRDS("../POLG_HEK_large_data_files/output/2_mtDNA_pos_coverage.CTRL.rds"),
@@ -183,12 +184,12 @@ p6s <- ggscatter(
 ggsave(plot = p6s, paste0("../plot/56s_Cor_MpMB_MSSw.pdf"), width=6, height=4)
 
 
-(p7 <- scmtMMB_HEK %>% filter(symbol == "Total") %>% filter(complete.cases(.)) %>% 
+p7 <- scmtMMB_HEK %>% filter(symbol == "Total") %>% filter(complete.cases(.)) %>% 
    ggplot(aes(x = log10(mtDNA_depth), y = mutation_per_MB + 1)) +
   geom_point(aes(col = sample)) + facet_wrap(~seurat_clusters) + 
   scale_color_manual(values = color_vec) + 
   theme_bw() + ylab("Mutation per MB (Total)") + theme(legend.position="none") +
-  geom_smooth(method = "lm"))
+  geom_smooth(method = "lm")
 ggsave(plot = p7, paste0("../plot/57_CorDepth_MpMB_cluster.pdf"), width=6, height=6)
 
 p7s <- ggscatter(
@@ -199,6 +200,40 @@ p7s <- ggscatter(
   stat_cor(
     aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~")), 
     label.y = 2750)
-ggsave(plot = p7s, paste0("../plot/57s_CorDepth_MpMB_cluster.pdf"))
+ggsave(plot = p7s, paste0("../plot/57s_CorDepth_MpMB_cluster.pdf"), width=6, height=6)
 
+```
+
+
+
+```{r scmtMMB UMAP, fig.width=4.5 fig.height=4}
+
+lapply(c("CI", "CIII", "CIV", "CV", "tRNA", "rRNA", "Total"), function(cat){
+  
+  df <- scmtMMB_HEK %>% dplyr::filter(symbol == cat & barcode != "pseudobulk") %>% 
+                       mutate(log10_MpMB = log10(mutation_per_MB), log2_MSSw = log2(MSS_weighted)) %>% 
+                       mutate(log10_MpMB = ifelse(is.infinite(log10_MpMB), NA, log10_MpMB),
+                              log2_MSSw = ifelse(is.infinite(log2_MSSw), NA, log2_MSSw))
+  
+  p <- ggplot(df, aes(x = atacUMAP_1, y = atacUMAP_2, color = log10_MpMB)) +
+  geom_point(size = 0.01) + 
+  scale_color_gradientn(colors = BuenColors::jdb_palette("solar_extra"), 
+                        limit = quantile(df$log10_MpMB, c(0.02,0.98), na.rm =TRUE)) +
+  theme(aspect.ratio=1) + theme_classic() + ggtitle(paste0("MpMB_", cat)) 
+  p.nl <- p + theme_void() + Seurat::NoLegend() 
+  p.leg <- ggpubr::get_legend(p) %>% ggpubr::as_ggplot()
+  ggsave(plot = p.nl, paste0("../plot/5_MpMB_UMAP/MpMB_", cat,".pdf"), width = 2, height = 2)
+  ggsave(plot = p.leg, paste0("../plot/5_MpMB_UMAP/MpMB_", cat,".leg.pdf"), width = 3, height = 2)
+  
+  p <- ggplot(df, aes(x = atacUMAP_1, y = atacUMAP_2, color = log2_MSSw)) +
+  geom_point(size = 0.01) + scale_colour_viridis_c() +
+  theme(aspect.ratio=1) + theme_classic() + ggtitle(paste0("MSS_weighted_", cat))
+  p.nl <- p + theme_void() + Seurat::NoLegend() 
+  p.leg <- ggpubr::get_legend(p) %>% ggpubr::as_ggplot()
+  ggsave(plot = p.nl, paste0("../plot/5_MSSw_UMAP/MSSw_", cat,".pdf"), width = 2, height = 2)
+  ggsave(plot = p.leg, paste0("../plot/5_MSSw_UMAP/MSSw_", cat,".leg.pdf"), width = 3, height = 2)
+
+})
+
+```
 ```
