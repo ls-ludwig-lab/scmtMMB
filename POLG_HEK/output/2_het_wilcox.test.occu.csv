@@ -1,0 +1,8 @@
+,condition,.y.,group1,group2,n1,n2,statistic,p,p.adj,p.adj.signif
+1,CTRL,mean,de-novo,Parental,67,388,4801.5,1.63e-16,3.26e-16,****
+2,KI36,mean,de-novo,Parental,1576,161,34189.5,9.19e-53,4.595e-52,****
+3,KI36,mean,de-novo,POLG-shared,1576,746,408509.5,1.37e-32,5.48e-32,****
+4,KI36,mean,Parental,POLG-shared,161,746,92322,9.75e-27,2.925e-26,****
+5,KIA2,mean,de-novo,Parental,3569,336,153553,7.4e-113,5.18e-112,****
+6,KIA2,mean,de-novo,POLG-shared,3569,746,1137385.5,3.74e-10,3.74e-10,****
+7,KIA2,mean,Parental,POLG-shared,336,746,209206,1.32e-69,7.92e-69,****

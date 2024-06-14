@@ -1,0 +1,4 @@
+,.y.,group1,group2,n1,n2,statistic,p,p.adj,p.adj.signif
+1,mean,CTRL,KI36,455,2483,570207,0.749,0.749,ns
+2,mean,CTRL,KIA2,455,4651,821757,3.4e-15,6.8e-15,****
+3,mean,KI36,KIA2,2483,4651,4739873.5,9.32e-36,2.796e-35,****

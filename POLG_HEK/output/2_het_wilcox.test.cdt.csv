@@ -1,0 +1,8 @@
+,occurrence,.y.,group1,group2,n1,n2,statistic,p,p.adj,p.adj.signif
+1,POLG-shared,mean,KI36,KIA2,746,746,256764.5,0.01,0.02,*
+2,Parental,mean,CTRL,KI36,388,161,9929.5,2.38e-36,1.19e-35,****
+3,Parental,mean,CTRL,KIA2,388,336,11336,4.77e-82,3.339e-81,****
+4,Parental,mean,KI36,KIA2,161,336,24658,0.111,0.111,ns
+5,de-novo,mean,CTRL,KI36,67,1576,38831,0.000241,0.000723,***
+6,de-novo,mean,CTRL,KIA2,67,3569,50943.5,7.62e-16,3.048e-15,****
+7,de-novo,mean,KI36,KIA2,1576,3569,2053409,7.15e-54,4.29e-53,****
