@@ -30,11 +30,12 @@ library(scales)
 ```{r data loading, message=FALSE, warning=FALSE}
 # Load the seurat object
 mtVar.bulk.df <- read.csv("../output/2_mtVar.bulk.meta.csv", row.names = "X")
+CTRL_dnV <- mtVar.bulk.df %>% filter(occurrence == "Private" & condition == "CTRL") %>% pull(variant)
 KI36_dnV <- mtVar.bulk.df %>% filter(occurrence != "Parental" & condition == "KI36") %>% pull(variant)
 KIA2_dnV <- mtVar.bulk.df %>% filter(occurrence != "Parental" & condition == "KIA2") %>% pull(variant)
 
 
-mmatMut.CTRL <- readRDS("../POLG_HEK_large_data_files/output/2_mmtx.CTRL.rds")
+mmatMut.CTRL <- readRDS("../POLG_HEK_large_data_files/output/2_mmtx.CTRL.rds")[CTRL_dnV,]
 mmatMut.KI36 <- readRDS("../POLG_HEK_large_data_files/output/2_mmtx.KI36.rds")[KI36_dnV,]
 mmatMut.KIA2 <- readRDS("../POLG_HEK_large_data_files/output/2_mmtx.KIA2.rds")[KIA2_dnV,]
 mmat.list <- list(mmatMut.CTRL, mmatMut.KI36, mmatMut.KIA2)
