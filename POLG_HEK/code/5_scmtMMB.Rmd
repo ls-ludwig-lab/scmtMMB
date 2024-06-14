@@ -32,7 +32,7 @@ library(data.table)
 ```{r data loading, message=FALSE, warning=FALSE}
 # Load the seurat object
 mtVar.bulk.df <- read.csv("../output/2_mtVar.bulk.meta.csv", row.names = "X")
-CTRL_dnV <- mtVar.bulk.df %>% filter(occurrence == "Private" & condition == "CTRL") %>% pull(variant)
+CTRL_dnV <- mtVar.bulk.df %>% filter(occurrence == "de-novo" & condition == "CTRL") %>% pull(variant)
 KI36_dnV <- mtVar.bulk.df %>% filter(occurrence != "Parental" & condition == "KI36") %>% pull(variant)
 KIA2_dnV <- mtVar.bulk.df %>% filter(occurrence != "Parental" & condition == "KIA2") %>% pull(variant)
 
@@ -63,7 +63,7 @@ write.csv(scmtMMB_HEK, "../output/5_scmtMMB_HEK.csv", quote = FALSE, row.names =
 
 ### Single cell MMB at Complex level
 - MSS 
-```{r , message=FALSE, warning=FALSE, fig.width=7, fig.height=1.2}
+```{r , message=FALSE, warning=FALSE, fig.width=9, fig.height=2}
 
 scmtMMB_HEK_com <- scmtMMB_HEK %>% filter(symbol %in% c("CI", "CIII", "CIV", "CV", "tRNA", "rRNA", "Total")) %>% 
                       mutate(symbol = factor(symbol,levels = c("CI", "CIII", "CIV", "CV", "tRNA", "rRNA", "Total")))
@@ -82,11 +82,11 @@ scmtMMB_HEK_com <- scmtMMB_HEK %>% filter(symbol %in% c("CI", "CIII", "CIV", "CV
           theme(aspect.ratio=1/1, axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()) +
           labs(y = bquote(paste(log[10], "(MSS + 1)"))))
 
-ggsave(plot = p1, "../plot/51_MSS_complex.pdf")
+ggsave(plot = p1, "../plot/51_MSS_complex.pdf", width = 14, height = 2.5)
 ```
 
 - MSS weighted by heteroplasmy
-```{r , message=FALSE, warning=FALSE, fig.width=7, fig.height=1.2}
+```{r , message=FALSE, warning=FALSE, fig.width=7, fig.height=2}
 (p2 <- scmtMMB_HEK_com %>% 
           ggplot(aes(x = sample, y =  MSS_weighted + 0.01)) +
           geom_jitter(aes(fill = sample), size = 0.1, color = "grey") + 
@@ -103,7 +103,8 @@ ggsave(plot = p1, "../plot/51_MSS_complex.pdf")
                 axis.text.x=element_blank(), axis.ticks.x=element_blank()) +
           labs(y = bquote(paste(log[2], "(Weighted MSS + 0.01)"))))
 
-ggsave(plot = p2, "../plot/52_MSS_weighted_complex.pdf")
+ggsave(plot = p2, "../plot/52_MSS_weighted_complex.pdf", width = 14, height = 2.5)
+
 ```
 - Mutations per MB
 ```{r , message=FALSE, warning=FALSE, fig.width=7, fig.height=1.2}
@@ -121,7 +122,7 @@ ggsave(plot = p2, "../plot/52_MSS_weighted_complex.pdf")
           theme(aspect.ratio=1/1, axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()) +
           labs(y = bquote(paste(log[10], "(Mutation per MB + 1)"))))
 
-# ggsave(plot = p3, "../plot/3_mutation_per_MB_complex.pdf") # , scale = 1.5
+ggsave(plot = p3, "../plot/53_mutation_per_MB_complex.pdf", width = 14, height = 2.5)
 
 ```
 ```{r , message=FALSE, warning=FALSE, fig.width=6, fig.height=2}
