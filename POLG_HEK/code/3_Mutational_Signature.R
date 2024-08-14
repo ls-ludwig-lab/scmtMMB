@@ -89,10 +89,6 @@ prop_df <- refallele_long %>% group_by(three_plot, group_change, strand) %>%
   summarize(observed_prop_KIA2 = sum(KIA2)/total_KIA2,
             observed_prop_KI36 = sum(KI36)/total_KI36,
             observed_prop_CTRL = sum(CTRL)/total_CTRL,
-            # observed_prop_Parental = sum(Parental)/total_Parental,
-            # observed_prop_KI36P = sum(KI36P)/total_KI36P,
-            # observed_prop_KIA2P = sum(KIA2P)/total_KIA2P,
-            # observed_prop_POLG = sum(POLG)/total_POLG,
             expected_prop = n()/total, n = n()) %>%
   mutate(fc_KIA2 = observed_prop_KIA2/expected_prop,
          fc_KI36 = observed_prop_KI36/expected_prop,
@@ -125,7 +121,7 @@ CTRL.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_CTRL, yl
   facet_nested(~group_change_plot, scales="free_x", space="free") +
   ggtitle("Mutational Signature CTRL") 
 
-ggsave(plot = CTRL.plot, width = 5, height = 3, filename = "../plot/31_Mutational_Signature_CTRL.pdf")
+ggsave(plot = CTRL.plot, width = 4, height = 2.5, filename = "../plot/31_Mutational_Signature_CTRL.pdf")
 
 
 KI36.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KI36, ylim(0,8))) +
@@ -139,9 +135,9 @@ KI36.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KI36, yl
   geom_hline(yintercept = 1, linetype =2, color = "black") +
   labs(x = "Change in nucleotide", y = "Substitution Rate (Observed/Expected)") +
   facet_nested(~group_change_plot, scales="free_x", space="free") +
-  ggtitle("Mutational Signature KI36", subtitle = "Cosine Similarity (CTRL) = 0.814")
+  ggtitle("Mutational Signature KI36")#, subtitle = "Cosine Similarity (CTRL) = 0.829")
 
-ggsave(plot = KI36.plot, width = 5, height = 3, filename = "../plot/31_Mutational_Signature_KI36.pdf")
+ggsave(plot = KI36.plot, width = 4, height = 2.5, filename = "../plot/31_Mutational_Signature_KI36.pdf")
 
 KIA2.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KIA2, ylim(0,8))) +
   geom_bar(stat = "identity", position = "dodge") + pretty_plot() + L_border() + 
@@ -154,9 +150,9 @@ KIA2.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KIA2, yl
   geom_hline(yintercept = 1, linetype =2, color = "black") +
   labs(x = "Change in nucleotide", y = "Substitution Rate (Observed/Expected)") +
   facet_nested(~group_change_plot, scales="free_x", space="free") +
-  ggtitle("Mutational Signature KIA2", subtitle = "Cosine Similarity (CTRL) = 0.943")
+  ggtitle("Mutational Signature KIA2")#, subtitle = "Cosine Similarity (CTRL) = 0.953")
 
-ggsave(plot = KIA2.plot, width = 5, height = 3, filename = "../plot/31_Mutational_Signature_KIA2.pdf")
+ggsave(plot = KIA2.plot, width = 4, height = 2.5, filename = "../plot/31_Mutational_Signature_KIA2.pdf")
 
 # Cosine similarity
 lsa::cosine(prop_df$observed_prop_CTRL, prop_df$observed_prop_KI36)

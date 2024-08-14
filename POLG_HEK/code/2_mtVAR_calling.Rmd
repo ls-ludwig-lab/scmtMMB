@@ -114,11 +114,12 @@ mmat.KIA2 <- call_mutations_mgatk(mitoSE.KIA2)
 ```
 ```{r VarPlot, message=FALSE, warning=FALSE, fig.width=6, fig.height=2}
 VarPlot <- function(mmat, SampleID){
-    counts <- as.data.frame(rowData(mmat)) %>% subset(strand_correlation > 0.65 & vmr > 0.01) %>% nrow()
+    counts <- as.data.frame(rowData(mmat)) %>% subset(n_cells_conf_detected >= 1 & 
+                                                        strand_correlation > 0.65 & vmr > 0.01) %>% nrow()
     plt <- VariantPlot(as.data.frame(rowData(mmat))) + 
            labs(title = SampleID, subtitle = paste0("Number of somatic variants: ", counts)) + 
-           scale_y_log10(limits = c(-5,1), n.breaks = 6) + scale_x_continuous(limits = c(-0.6,1), n.breaks = 4)
-    ggsave(plot = plt, paste0("../plot/22_VMR_",SampleID,".pdf"), width = 4, height = 4)
+           scale_y_log10(limits = c(-5,1), n.breaks = 7) + scale_x_continuous(limits = c(-0.6,1), n.breaks = 4)
+    ggsave(plot = plt, paste0("../plot/22_VMR_",SampleID,".pdf"), width = 3, height = 3)
     return(plt)
     }
 
@@ -130,6 +131,22 @@ cowplot::plot_grid(p2.1, p2.2, p2.3, nrow = 1)
 ### mtDNA somatic variant
 
 mtDNA somatic variant were identified by selecting variant with VMR higher than 0.01 and high strand concordance (\> 0.65), error-prone variants were excluded (301A\>C, 302A\>C, 310T\>C, and 316G\>C). Top 10 high mean heteroplasmy variants in each cell line were visualized.
+
+```{r}
+sumVar <- function(mmat, n_cells = 1){
+  var <- as.data.frame(rowData(mmat))
+  var <- var %>% subset(n_cells_conf_detected >= n_cells &
+                          variant %ni% c("301A>C", "302A>C", "310T>C", "316G>C")) %>% 
+            mutate(type = ifelse(strand_correlation > 0.65,
+                                 ifelse(vmr > 0.01, "high-confident", "germline"), "error-prone"))
+  table(var$type)
+}
+
+sumVar(mmat.CTRL)
+sumVar(mmat.KI36)
+sumVar(mmat.KIA2)
+
+```
 
 ```{r mito somatic variant filtering, message=FALSE, warning=FALSE}
 
@@ -156,6 +173,76 @@ rowData(mmatMut.KIA2)$condition <- "KIA2"
 saveRDS(mmatMut.CTRL, "../POLG_HEK_large_data_files/output/2_mmtx.CTRL.rds")
 saveRDS(mmatMut.KI36, "../POLG_HEK_large_data_files/output/2_mmtx.KI36.rds")
 saveRDS(mmatMut.KIA2, "../POLG_HEK_large_data_files/output/2_mmtx.KIA2.rds")
+
+
+mmatMut.CTRL <- readRDS("../POLG_HEK_large_data_files/output/2_mmtx.CTRL.rds")
+mmatMut.KI36 <- readRDS("../POLG_HEK_large_data_files/output/2_mmtx.KI36.rds")
+mmatMut.KIA2 <- readRDS("../POLG_HEK_large_data_files/output/2_mmtx.KIA2.rds")
+```
+
+```{r}
+df1 <- data.frame(
+    condition = c(rep(x = "CTRL", ncol(mmatMut.CTRL)), rep(x = "KI36", ncol(mmatMut.KI36)), rep(x = "KIA2", ncol(mmatMut.KIA2))),
+    counts = c(colSums(assay(mmatMut.CTRL)>0), colSums(assay(mmatMut.KI36)>0), colSums(assay(mmatMut.KIA2)>0)),
+    mtDNA_depth = c(mmatMut.CTRL$depth, mmatMut.KI36$depth, mmatMut.KIA2$depth)) %>% 
+    mutate(counts_norm = counts/mtDNA_depth) 
+
+
+p <- df1 %>% 
+  ggplot(aes(x= condition, y = counts)) +
+  geom_violin(scale = "width", aes(fill = condition)) + geom_boxplot(width=0.1, outlier.size=0) + 
+  scale_fill_manual(values = color_vec) + ylab("mtDNA mutation counts") +
+  theme_classic() + NoLegend()
+
+ggsave(plot = p, "../plot/2_mtVAR_counts.pdf", width = 2.5, height = 2.5)
+
+ggplot(data = df1, aes(x=mtDNA_depth, y = counts, color = condition)) +
+  geom_point(size=0.01) + scale_color_manual(values = color_vec) + geom_smooth(method = "lm") +
+  facet_wrap(~condition) +
+  scale_x_continuous(limits = c(0, NA), expand = c(0,0)) +
+  scale_y_continuous(limits = c(0, NA), expand = c(0,0)) + 
+  theme_classic() + NoLegend()
+
+pn <- df1 %>% 
+  ggplot(aes(x= condition, y = counts/mtDNA_depth)) +
+  geom_violin(scale = "width", aes(fill = condition)) + geom_boxplot(width=0.1, outlier.size=0) + 
+  scale_fill_manual(values = color_vec) + ylab("Normalized mtDNA mutation counts") +
+  theme_classic() + NoLegend()
+
+ggsave(plot = pn, "../plot/2_normalized_mtVAR_counts.pdf", width = 2.5, height = 2.5)
+
+summarizer <- function(data, numeric_cols = NULL, ...) {
+  data %>%
+    group_by(...) %>%
+    summarise(across({{numeric_cols}}, list(
+      min = ~min(.x),
+      q05 = ~quantile(.x, 0.05, na.rm = TRUE),
+      median = ~median(.x, na.rm = TRUE),
+      q95 = ~quantile(.x, 0.95, na.rm = TRUE),
+      max = ~max(.x)
+    ), .names = "{col}_{fn}"))
+}
+
+summarizer(df1, c(counts, counts_norm), condition) %>% tidyr::pivot_longer(cols = -condition, names_to = "name", values_to = "value") %>% 
+  mutate(
+    feature = sub("^(.*)_[^_]+$", "\\1", name),
+    stat = sub("^.*_([^_]+)$", "\\1", name) 
+  ) %>% 
+  select(condition, feature, stat, value) %>% 
+  tidyr::pivot_wider(names_from = condition, values_from = value)
+
+#    feature     stat      CTRL   KI36    KIA2
+#    <chr>       <chr>    <dbl>  <dbl>   <dbl>
+#  1 counts      min      2      51     110   
+#  2 counts      q05      4     103.    254.  
+#  3 counts      median   9     180     472.  
+#  4 counts      q95     20     288     721   
+#  5 counts      max    218     592    1123   
+#  6 counts_norm min      0.146   2.38    5.12
+#  7 counts_norm q05      0.353   3.91    7.41
+#  8 counts_norm median   0.769   6.38   10.9 
+#  9 counts_norm q95      1.98   10.5    17.1 
+# 10 counts_norm max      5.34   15      25.5 
 ```
 
 ** mtDNA somatic variant visualization 

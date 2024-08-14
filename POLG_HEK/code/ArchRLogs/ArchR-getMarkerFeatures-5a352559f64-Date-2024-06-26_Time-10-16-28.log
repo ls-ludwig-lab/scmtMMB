@@ -1,0 +1,1110 @@
+
+           ___      .______        ______  __    __  .______      
+          /   \     |   _  \      /      ||  |  |  | |   _  \     
+         /  ^  \    |  |_)  |    |  ,----'|  |__|  | |  |_)  |    
+        /  /_\  \   |      /     |  |     |   __   | |      /     
+       /  _____  \  |  |\  \\___ |  `----.|  |  |  | |  |\  \\___.
+      /__/     \__\ | _| `._____| \______||__|  |__| | _| `._____|
+    
+Logging With ArchR!
+
+Start Time : 2024-06-26 10:16:28
+
+------- ArchR Info
+
+ArchRThreads = 4
+ArchRGenome = Hg38
+
+------- System Info
+
+Computer OS = unix
+Total Cores = 10
+
+------- Session Info
+
+R version 4.2.2 (2022-10-31)
+Platform: aarch64-apple-darwin20 (64-bit)
+Running under: macOS 14.2.1
+
+Matrix products: default
+LAPACK: /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRlapack.dylib
+
+Random number generation:
+ RNG:     L'Ecuyer-CMRG 
+ Normal:  Inversion 
+ Sample:  Rejection 
+ 
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+ [1] parallel  stats4    grid      stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] presto_1.0.0                      nabor_0.5.0                       Rsamtools_2.14.0                 
+ [4] BSgenome.Hsapiens.UCSC.hg38_1.4.5 BSgenome_1.66.3                   rtracklayer_1.58.0               
+ [7] Biostrings_2.66.0                 XVector_0.38.0                    dplyr_1.1.3                      
+[10] harmony_0.1.1                     Signac_1.10.0                     SeuratObject_4.1.3               
+[13] Seurat_4.1.1.9001                 rhdf5_2.42.1                      SummarizedExperiment_1.28.0      
+[16] Biobase_2.58.0                    MatrixGenerics_1.10.0             Rcpp_1.0.11                      
+[19] Matrix_1.5-4.1                    GenomicRanges_1.50.2              GenomeInfoDb_1.34.9              
+[22] IRanges_2.32.0                    S4Vectors_0.36.2                  BiocGenerics_0.44.0              
+[25] matrixStats_1.0.0                 data.table_1.14.8                 stringr_1.5.0                    
+[28] plyr_1.8.8                        magrittr_2.0.3                    ggplot2_3.4.3                    
+[31] gtable_0.3.4                      gtools_3.9.4                      gridExtra_2.3                    
+[34] ArchR_1.0.2                      
+
+loaded via a namespace (and not attached):
+  [1] readxl_1.4.3             fastmatch_1.1-4          igraph_1.5.1             lazyeval_0.2.2          
+  [5] sp_2.0-0                 splines_4.2.2            RcppHNSW_0.5.0           BiocParallel_1.32.6     
+  [9] listenv_0.9.0            scattermore_1.2          digest_0.6.33            htmltools_0.5.6         
+ [13] fansi_1.0.4              tensor_1.5               cluster_2.1.4            ROCR_1.0-11             
+ [17] globals_0.16.2           spatstat.sparse_3.0-2    colorspace_2.1-0         ggrepel_0.9.3           
+ [21] xfun_0.40                crayon_1.5.2             RCurl_1.98-1.12          jsonlite_1.8.7          
+ [25] progressr_0.14.0         spatstat.data_3.0-1      survival_3.5-7           zoo_1.8-12              
+ [29] glue_1.6.2               polyclip_1.10-4          zlibbioc_1.44.0          leiden_0.4.3            
+ [33] DelayedArray_0.24.0      Rhdf5lib_1.20.0          future.apply_1.11.0      abind_1.4-5             
+ [37] scales_1.2.1             spatstat.random_3.1-6    miniUI_0.1.1.1           viridisLite_0.4.2       
+ [41] xtable_1.8-4             reticulate_1.32.0        htmlwidgets_1.6.2        httr_1.4.7              
+ [45] RColorBrewer_1.1-3       ellipsis_0.3.2           ica_1.0-3                farver_2.1.1            
+ [49] XML_3.99-0.14            pkgconfig_2.0.3          uwot_0.1.16              deldir_1.0-9            
+ [53] utf8_1.2.3               labeling_0.4.3           tidyselect_1.2.0         rlang_1.1.1             
+ [57] reshape2_1.4.4           later_1.3.1              munsell_0.5.0            cellranger_1.1.0        
+ [61] tools_4.2.2              cli_3.6.1                generics_0.1.3           ggridges_0.5.4          
+ [65] evaluate_0.21            fastmap_1.1.1            yaml_2.3.7               goftest_1.2-3           
+ [69] knitr_1.44               fitdistrplus_1.1-11      purrr_1.0.2              RANN_2.6.1              
+ [73] pbapply_1.7-2            future_1.33.0            nlme_3.1-163             mime_0.12               
+ [77] RcppRoll_0.3.0           compiler_4.2.2           rstudioapi_0.15.0        plotly_4.10.2           
+ [81] png_0.1-8                spatstat.utils_3.0-3     tibble_3.2.1             stringi_1.7.12          
+ [85] RSpectra_0.16-1          lattice_0.21-8           psych_2.3.6              vctrs_0.6.3             
+ [89] pillar_1.9.0             lifecycle_1.0.3          rhdf5filters_1.10.1      spatstat.geom_3.2-5     
+ [93] lmtest_0.9-40            RcppAnnoy_0.0.21         cowplot_1.1.1            bitops_1.0-7            
+ [97] irlba_2.3.5.1            httpuv_1.6.11            patchwork_1.1.3          BiocIO_1.8.0            
+[101] R6_2.5.1                 promises_1.2.1           KernSmooth_2.23-22       parallelly_1.36.0       
+[105] codetools_0.2-19         fastDummies_1.7.3        MASS_7.3-60              rjson_0.2.21            
+[109] withr_2.5.0              GenomicAlignments_1.34.1 sctransform_0.3.5        mnormt_2.1.1            
+[113] GenomeInfoDbData_1.2.9   tidyr_1.3.0              rmarkdown_2.25           Cairo_1.6-1             
+[117] Rtsne_0.16               spatstat.explore_3.2-3   shiny_1.7.5              restfulr_0.0.15         
+
+
+------- Log Info
+
+
+2024-06-26 10:16:28 : Input-Parameters, Class = list
+
+Input-Parameters$: length = 1
+                       
+1 function (name)      
+2 .Internal(args(name))
+
+
+Input-Parameters$ArchRProj: length = 1
+
+Input-Parameters$groupBy: length = 1
+[1] "Clusters"
+
+
+Input-Parameters$useGroups: length = 1
+[1] "5"
+
+
+Input-Parameters$bgdGroups: length = 1
+[1] "7"
+
+
+Input-Parameters$useMatrix: length = 1
+[1] "GeneScoreMatrix"
+
+
+Input-Parameters$bias: length = 2
+[1] "TSSEnrichment" "log10(nFrags)"
+
+
+Input-Parameters$normBy: length = 0
+NULL
+
+
+Input-Parameters$testMethod: length = 1
+[1] "wilcoxon"
+
+
+Input-Parameters$maxCells: length = 1
+[1] 500
+
+
+Input-Parameters$scaleTo: length = 1
+[1] 10000
+
+
+Input-Parameters$threads: length = 1
+[1] 4
+
+
+Input-Parameters$k: length = 1
+[1] 100
+
+
+Input-Parameters$bufferRatio: length = 1
+[1] 0.8
+
+
+Input-Parameters$binarize: length = 1
+[1] FALSE
+
+
+Input-Parameters$useSeqnames: length = 0
+NULL
+
+
+Input-Parameters$verbose: length = 1
+[1] TRUE
+
+
+Input-Parameters$logFile: length = 1
+[1] "ArchRLogs/ArchR-getMarkerFeatures-5a352559f64-Date-2024-06-26_Time-10-16-28.log"
+
+
+Input-Parameters$ArchRProj: length = 1
+
+Input-Parameters$groupBy: length = 1
+[1] "Clusters"
+
+
+Input-Parameters$useGroups: length = 1
+[1] "5"
+
+
+Input-Parameters$bgdGroups: length = 1
+[1] "7"
+
+
+Input-Parameters$useMatrix: length = 1
+[1] "GeneScoreMatrix"
+
+
+Input-Parameters$bias: length = 2
+[1] "TSSEnrichment" "log10(nFrags)"
+
+
+Input-Parameters$normBy: length = 0
+NULL
+
+
+Input-Parameters$testMethod: length = 1
+[1] "wilcoxon"
+
+
+Input-Parameters$maxCells: length = 1
+[1] 500
+
+
+Input-Parameters$scaleTo: length = 1
+[1] 10000
+
+
+Input-Parameters$threads: length = 1
+[1] 4
+
+
+Input-Parameters$k: length = 1
+[1] 100
+
+
+Input-Parameters$bufferRatio: length = 1
+[1] 0.8
+
+
+Input-Parameters$binarize: length = 1
+[1] FALSE
+
+
+Input-Parameters$useSeqnames: length = 0
+NULL
+
+
+Input-Parameters$verbose: length = 1
+[1] TRUE
+
+
+Input-Parameters$logFile: length = 1
+[1] "ArchRLogs/ArchR-getMarkerFeatures-5a352559f64-Date-2024-06-26_Time-10-16-28.log"
+
+
+
+2024-06-26 10:16:28 : FeaturesPerSeqnames, Class = integer
+
+FeaturesPerSeqnames: length = 2
+[1]  327 2452
+
+
+
+2024-06-26 10:16:28 : FeatureDF, Class = DFrame
+DataFrame with 24919 rows and 6 columns
+      seqnames     start       end  strand         name     idx
+         <Rle>   <array>   <array> <array>      <array> <array>
+1         chr1     69091     70008       1        OR4F5       1
+2         chr1    140339    139790       2    LOC729737       2
+3         chr1    629010    585990       2 LOC101928626       3
+4         chr1    817371    819837       1       FAM87B       4
+5         chr1    825138    859446       1    LINC01128       5
+...        ...       ...       ...     ...          ...     ...
+24915     chrX 155264589 155258241       2       RAB39B     952
+24916     chrX 155334657 155276211       2        CLIC2     953
+24917     chrX 155380787 155381134       1       H2AFB1     954
+24918     chrX 155382115 155383230       1         F8A2     955
+24919     chrX 155669944 155490115       2        TMLHE     956
+
+
+2024-06-26 10:16:28 : MatrixClass = Sparse.Double.Matrix
+2024-06-26 10:16:28 : Matching Known Biases, 0.001 mins elapsed.
+
+2024-06-26 10:16:28 : MatchSummary 5, Class = list
+
+MatchSummary 5$cells: length = 114
+[1] 4421 4326 3709 2750 3916 4079
+
+
+MatchSummary 5$bgd: length = 114
+[1] 4472 4073 3889 2908 4000 4106
+
+
+MatchSummary 5$summaryCells: nRows = 5, nCols = 3
+              TSSEnrichment log10(nFrags)       name
+median            10.878000     3.7452973 foreground
+mean              11.010798     3.7470732 foreground
+sd                 2.545447     0.2399403 foreground
+lowerQuartile      9.353500     3.5752167 foreground
+upperQuartile     12.686250     3.9168880 foreground
+
+
+MatchSummary 5$summaryBgd: nRows = 5, nCols = 3
+              TSSEnrichment log10(nFrags)       name
+median             10.26450      3.975822 background
+mean               10.43641      3.958644 background
+sd                  2.14107      0.215930 background
+lowerQuartile       9.00025      3.829531 background
+upperQuartile      11.75350      4.121592 background
+
+
+MatchSummary 5$bgdGroups: nRows = 2, nCols = 1
+         7
+estbgd 336
+obsbgd 114
+
+
+MatchSummary 5$bgdGroupsProbs: nRows = 2, nCols = 1
+          7
+estbgdP 100
+obsbgdP 100
+
+
+MatchSummary 5$corbgdGroups: length = 1
+[1] NA
+
+
+MatchSummary 5$n: length = 1
+[1] 420
+
+
+MatchSummary 5$p: length = 1
+[1] 1
+
+
+MatchSummary 5$group: length = 1
+[1] "5"
+
+
+MatchSummary 5$k: length = 1
+[1] 100
+
+
+2024-06-26 10:16:29 : Computing Pairwise Tests (1 of 1), 0.011 mins elapsed.
+
+2024-06-26 10:16:29 : 5_cellsx, Class = character
+
+5_cellsx: length = 114
+[1] "HEK#GAACCGCGTGTTGTTG-1" "HEK#AGTGTACTCTTACGGA-1" "HEK#GGAACTTCAATGCCAT-1" "HEK#TTACGGATCTCCTTGG-1"
+[5] "HEK#CACCTTGGTCAATCCA-1" "HEK#TTGCGGGAGACGACTG-1"
+
+
+
+2024-06-26 10:16:29 : 5_bgdx, Class = character
+
+5_bgdx: length = 114
+[1] "HEK#TCAAGACAGTATGCTC-1" "HEK#AGCCTCTAGGATGCCA-1" "HEK#CTGCTCACACGACGAA-1" "HEK#TCAAAGCTCGTGATAC-1"
+[5] "HEK#ACAGAAAAGCGTCAAG-1" "HEK#CGCAGGTGTCGGCTGT-1"
+
+
+
+2024-06-26 10:16:29 : Pairwise Test 5 : Seqnames chr1
+
+2024-06-26 10:16:30 : 5_chr1_scMaty, Class = dgCMatrix
+5_chr1_scMaty: nRows = 2452, nCols = 228
+5_chr1_scMaty: NonZeroEntries = 160593, EntryRange = [ 0.049 , 63.237 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                      .                      .
+[2,]                      .                      .                      .                      .
+[3,]                      .                      .                      .                      .
+[4,]                      .                      .                      .                      .
+[5,]                      .                      .                      .                      .
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:30 : 5_chr1_diffResult, Class = data.frame
+5_chr1_diffResult: nRows = 2452, nCols = 8
+   log2Mean      log2FC       fdr      pval      mean1     mean2   n       auc
+f1 0.000000  0.00000000 1.0000000 1.0000000 0.00000000 0.0000000 114 0.5000000
+f2 0.000000  0.00000000 1.0000000 1.0000000 0.00000000 0.0000000 114 0.5000000
+f3 0.000000  0.00000000 1.0000000 1.0000000 0.00000000 0.0000000 114 0.5000000
+f4 3.305459 -1.94169275 0.4148561 0.0567903 0.02705273 0.1288507 114 0.4781471
+f5 4.560072  0.01767412 0.7091080 0.3461837 0.19942093 0.1968860 114 0.4765312
+f6 5.687900  0.19513630 0.9277821 0.7252871 0.47395574 0.4128860 114 0.4910357
+
+
+
+2024-06-26 10:16:30 : Pairwise Test 5 : Seqnames chr10
+
+2024-06-26 10:16:30 : 5_chr10_scMaty, Class = dgCMatrix
+5_chr10_scMaty: nRows = 970, nCols = 228
+5_chr10_scMaty: NonZeroEntries = 77082, EntryRange = [ 0.061 , 53.321 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                  .                          .                    .                    .    
+[2,]                  .                          .                    1.6                  .    
+[3,]                  4.721                      .                    .                    0.875
+[4,]                  .                          .                    .                    .    
+[5,]                  .                          .                    .                    .    
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                  .    
+[2,]                  .    
+[3,]                  1.569
+[4,]                  .    
+[5,]                  .    
+
+
+
+2024-06-26 10:16:30 : 5_chr10_diffResult, Class = data.frame
+5_chr10_diffResult: nRows = 970, nCols = 8
+      log2Mean     log2FC          fdr         pval      mean1     mean2   n       auc
+f2453 4.492750 -1.1087182 0.0040983230 2.140282e-04 0.11635952 0.2610790 114 0.3949677
+f2454 6.152609 -0.7524630 0.0019962056 7.721560e-05 0.45612277 0.7744206 114 0.3574946
+f2455 7.518842 -0.6324884 0.0055106039 3.295000e-04 1.25288595 1.9470963 114 0.3633810
+f2456 3.460022 -1.7884225 0.2479624704 1.002075e-01 0.03457011 0.1409475 114 0.4824946
+f2457 4.955848 -0.9299933 0.0066525001 4.313244e-04 0.17864027 0.3482984 114 0.3828870
+f2458 6.352273 -0.8368751 0.0006555022 1.283973e-05 0.50567568 0.9101226 114 0.3381810
+
+
+
+2024-06-26 10:16:30 : Pairwise Test 5 : Seqnames chr11
+
+2024-06-26 10:16:31 : 5_chr11_scMaty, Class = dgCMatrix
+5_chr11_scMaty: nRows = 1563, nCols = 228
+5_chr11_scMaty: NonZeroEntries = 73320, EntryRange = [ 0.057 , 34.554 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                  .                          .
+[2,]                      .                      .                  2.001                      .
+[3,]                      .                      .                  .                          .
+[4,]                      .                      .                  .                          .
+[5,]                      .                      .                  3.583                      .
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:31 : 5_chr11_diffResult, Class = data.frame
+5_chr11_diffResult: nRows = 1563, nCols = 8
+      log2Mean     log2FC       fdr      pval      mean1      mean2   n       auc
+f3423 0.000000  0.0000000 1.0000000 1.0000000 0.00000000 0.00000000 114 0.5000000
+f3424 5.105678  0.4919226 0.8475467 0.6436583 0.34426315 0.24226315 114 0.4872268
+f3425 0.000000  0.0000000 1.0000000 1.0000000 0.00000000 0.00000000 114 0.5000000
+f3426 2.131917 -0.3259261 0.8005005 0.5654207 0.02535087 0.03399993 114 0.4956140
+f3427 5.886014  0.5386749 0.8506423 0.6525401 0.60571929 0.41424562 114 0.4877655
+f3428 6.793044  0.5503409 0.8501013 0.6504934 1.14730701 0.78066672 114 0.4876885
+
+
+
+2024-06-26 10:16:31 : Pairwise Test 5 : Seqnames chr12
+
+2024-06-26 10:16:31 : 5_chr12_scMaty, Class = dgCMatrix
+5_chr12_scMaty: nRows = 1274, nCols = 228
+5_chr12_scMaty: NonZeroEntries = 81373, EntryRange = [ 0.053 , 43.422 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                  .                      .                          .                  .    
+[2,]                  .                      2.235                      .                  0.979
+[3,]                  .                      .                          .                  0.642
+[4,]                  3.678                  .                          .                  0.386
+[5,]                  2.862                  .                          .                  .    
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:31 : 5_chr12_diffResult, Class = data.frame
+5_chr12_diffResult: nRows = 1274, nCols = 8
+      log2Mean       log2FC        fdr       pval     mean1     mean2   n       auc
+f4986 0.000000  0.000000000 1.00000000 1.00000000 0.0000000 0.0000000 114 0.5000000
+f4987 6.012714  0.452597200 0.64516815 0.60516165 0.6457197 0.4694822 114 0.5177747
+f4988 4.888280 -0.002288347 0.10166995 0.06408240 0.2508070 0.2512191 114 0.4474454
+f4989 5.475911 -0.249084372 0.07237257 0.03981474 0.3480089 0.4152452 114 0.4350185
+f4990 5.392747 -0.466402413 0.06500577 0.03433978 0.3007019 0.4188156 114 0.4473299
+f4991 4.705950  0.269817356 0.67433811 0.63887449 0.2415176 0.1988244 114 0.4878039
+
+
+
+2024-06-26 10:16:31 : Pairwise Test 5 : Seqnames chr13
+
+2024-06-26 10:16:32 : 5_chr13_scMaty, Class = dgCMatrix
+5_chr13_scMaty: nRows = 559, nCols = 228
+5_chr13_scMaty: NonZeroEntries = 30822, EntryRange = [ 0.064 , 28.418 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                  .                      .    
+[2,]                      .                      .                  .                      .    
+[3,]                      .                      .                  .                      .    
+[4,]                      .                      .                  .                      .    
+[5,]                      .                      .                  1.109                  3.322
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:32 : 5_chr13_diffResult, Class = data.frame
+5_chr13_diffResult: nRows = 559, nCols = 8
+      log2Mean      log2FC       fdr       pval      mean1      mean2   n       auc
+f6260 3.355156 -0.39810928 0.2965271 0.12795888 0.06868418 0.09329817 114 0.4633733
+f6261 3.252098 -0.75852790 0.1366073 0.03470168 0.05332460 0.09628071 114 0.4699138
+f6262 3.426198 -0.75564110 0.1881963 0.06463986 0.06137726 0.10966668 114 0.4652201
+f6263 3.850000 -0.01640726 0.3978355 0.21706589 0.11700011 0.11843863 114 0.4692598
+f6264 3.638711  0.01702821 0.2468317 0.09608343 0.10113166 0.09984208 114 0.4594875
+f6265 4.184361 -0.33123219 0.4703182 0.28235215 0.13248261 0.16893863 114 0.4757618
+
+
+
+2024-06-26 10:16:32 : Pairwise Test 5 : Seqnames chr14
+
+2024-06-26 10:16:32 : 5_chr14_scMaty, Class = dgCMatrix
+5_chr14_scMaty: nRows = 850, nCols = 228
+5_chr14_scMaty: NonZeroEntries = 47079, EntryRange = [ 0.057 , 40.273 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                      .                      .
+[2,]                      .                      .                      .                      .
+[3,]                      .                      .                      .                      .
+[4,]                      .                      .                      .                      .
+[5,]                      .                      .                      .                      .
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:32 : 5_chr14_diffResult, Class = data.frame
+5_chr14_diffResult: nRows = 850, nCols = 8
+      log2Mean     log2FC       fdr      pval      mean1      mean2   n       auc
+f6819 0.000000  0.0000000 1.0000000 1.0000000 0.00000000 0.00000000 114 0.5000000
+f6820 2.498379 -0.4214424 0.2462391 0.1393424 0.03360529 0.04798243 114 0.4748769
+f6821 0.000000  0.0000000 1.0000000 1.0000000 0.00000000 0.00000000 114 0.5000000
+f6822 0.000000  0.0000000 1.0000000 1.0000000 0.00000000 0.00000000 114 0.5000000
+f6823 0.000000  0.0000000 1.0000000 1.0000000 0.00000000 0.00000000 114 0.5000000
+f6824 0.000000  0.0000000 1.0000000 1.0000000 0.00000000 0.00000000 114 0.5000000
+
+
+
+2024-06-26 10:16:32 : Pairwise Test 5 : Seqnames chr15
+
+2024-06-26 10:16:33 : 5_chr15_scMaty, Class = dgCMatrix
+5_chr15_scMaty: nRows = 817, nCols = 228
+5_chr15_scMaty: NonZeroEntries = 41177, EntryRange = [ 0.064 , 41.481 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                      .                      .
+[2,]                      .                      .                      .                      .
+[3,]                      .                      .                      .                      .
+[4,]                      .                      .                      .                      .
+[5,]                      .                      .                      .                      .
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:33 : 5_chr15_diffResult, Class = data.frame
+5_chr15_diffResult: nRows = 817, nCols = 8
+      log2Mean log2FC fdr pval mean1 mean2   n auc
+f7669        0      0   1    1     0     0 114 0.5
+f7670        0      0   1    1     0     0 114 0.5
+f7671        0      0   1    1     0     0 114 0.5
+f7672        0      0   1    1     0     0 114 0.5
+f7673        0      0   1    1     0     0 114 0.5
+f7674        0      0   1    1     0     0 114 0.5
+
+
+
+2024-06-26 10:16:33 : Pairwise Test 5 : Seqnames chr16
+
+2024-06-26 10:16:33 : 5_chr16_scMaty, Class = dgCMatrix
+5_chr16_scMaty: nRows = 1001, nCols = 228
+5_chr16_scMaty: NonZeroEntries = 50404, EntryRange = [ 0.063 , 144.977 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                      .                      .
+[2,]                      .                      .                      .                      .
+[3,]                      .                      .                      .                      .
+[4,]                      .                      .                      .                      .
+[5,]                      .                      .                      .                      .
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                  2.471
+[2,]                  .    
+[3,]                  .    
+[4,]                  .    
+[5,]                  .    
+
+
+
+2024-06-26 10:16:33 : 5_chr16_diffResult, Class = data.frame
+5_chr16_diffResult: nRows = 1001, nCols = 8
+      log2Mean      log2FC       fdr       pval     mean1      mean2   n       auc
+f8486 4.030424  1.34509045 0.9754480 0.89749013 0.1969386 0.07220176 114 0.5023469
+f8487 4.747414 -1.40478872 0.3809455 0.03082576 0.1204122 0.33328065 114 0.4520622
+f8488 4.879338 -1.39092189 0.4527532 0.05876942 0.1337719 0.36504379 114 0.4606802
+f8489 4.372778  0.10680324 0.6170786 0.20077587 0.1796843 0.16623676 114 0.4724531
+f8490 4.529572  0.31519923 0.7861418 0.46571635 0.2158686 0.17178065 114 0.4850723
+f8491 4.243555  0.01043545 0.6210189 0.21217630 0.1579913 0.15678938 114 0.4703370
+
+
+
+2024-06-26 10:16:33 : Pairwise Test 5 : Seqnames chr17
+
+2024-06-26 10:16:34 : 5_chr17_scMaty, Class = dgCMatrix
+5_chr17_scMaty: nRows = 1426, nCols = 228
+5_chr17_scMaty: NonZeroEntries = 75906, EntryRange = [ 0.052 , 39.361 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                      .                      .
+[2,]                      .                      .                      .                      .
+[3,]                      .                      .                      .                      .
+[4,]                      .                      .                      .                      .
+[5,]                      .                      .                      .                      .
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:34 : 5_chr17_diffResult, Class = data.frame
+5_chr17_diffResult: nRows = 1426, nCols = 8
+      log2Mean      log2FC       fdr       pval      mean1      mean2   n       auc
+f9487 0.000000  0.00000000 1.0000000 1.00000000 0.00000000 0.00000000 114 0.5000000
+f9488 3.404903 -0.74277707 0.5060767 0.09670151 0.06073691 0.10754374 114 0.4694521
+f9489 3.296238  1.21683950 0.7100960 0.30453462 0.11172818 0.04307013 114 0.5133118
+f9490 4.758595 -0.86256646 0.3488877 0.03841190 0.15973681 0.29762246 114 0.4425208
+f9491 4.174565 -1.72091392 0.3394838 0.03009347 0.06496490 0.23429797 114 0.4504463
+f9492 4.891249 -0.02912045 0.4481570 0.06556138 0.24892114 0.25417547 114 0.4473684
+
+
+
+2024-06-26 10:16:34 : Pairwise Test 5 : Seqnames chr18
+
+2024-06-26 10:16:34 : 5_chr18_scMaty, Class = dgCMatrix
+5_chr18_scMaty: nRows = 384, nCols = 228
+5_chr18_scMaty: NonZeroEntries = 22701, EntryRange = [ 0.067 , 41.885 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                  .                      .    
+[2,]                      .                      .                  .                      .    
+[3,]                      .                      .                  1.832                  .    
+[4,]                      .                      .                  1.783                  1.123
+[5,]                      .                      .                  .                      0.924
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:34 : 5_chr18_diffResult, Class = data.frame
+5_chr18_diffResult: nRows = 384, nCols = 8
+       log2Mean      log2FC       fdr       pval      mean1      mean2   n       auc
+f10913 3.103246  0.34801999 0.9776439 0.91144930 0.07565795 0.05756138 114 0.5023084
+f10914 4.852249 -0.06054294 0.7999120 0.58326915 0.23928963 0.24992109 114 0.5127347
+f10915 4.838901 -0.46431459 0.8750520 0.70975426 0.20221928 0.28232458 114 0.4902278
+f10916 5.196155 -1.42463815 0.2902200 0.06726454 0.16578953 0.45983334 114 0.4480609
+f10917 6.143679 -0.32193643 0.5692556 0.31680762 0.54250901 0.68033323 114 0.4637581
+f10918 3.768396  0.29064017 0.9812033 0.92773011 0.12276314 0.09876315 114 0.4980763
+
+
+
+2024-06-26 10:16:34 : Pairwise Test 5 : Seqnames chr19
+
+2024-06-26 10:16:35 : 5_chr19_scMaty, Class = dgCMatrix
+5_chr19_scMaty: nRows = 1653, nCols = 228
+5_chr19_scMaty: NonZeroEntries = 87626, EntryRange = [ 0.047 , 44.33 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                      .                      .
+[2,]                      .                      .                      .                      .
+[3,]                      .                      .                      .                      .
+[4,]                      .                      .                      .                      .
+[5,]                      .                      .                      .                      .
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:35 : 5_chr19_diffResult, Class = data.frame
+5_chr19_diffResult: nRows = 1653, nCols = 8
+       log2Mean       log2FC       fdr       pval      mean1      mean2   n       auc
+f11297 0.000000  0.000000000 1.0000000 1.00000000 0.00000000 0.00000000 114 0.5000000
+f11298 1.930359  1.224105506 0.5700354 0.09037821 0.03805265 0.01127193 114 0.5219298
+f11299 4.246257  1.182933106 0.5806654 0.10784288 0.22236855 0.09303508 114 0.5322407
+f11300 4.359556 -0.001613625 0.8099077 0.41254828 0.17120189 0.17140330 114 0.4800323
+f11301 3.546400 -0.383175963 0.8351842 0.49315522 0.08018421 0.10724555 114 0.4852262
+f11302 5.155607  0.512593775 0.5822464 0.11100639 0.35886847 0.24892968 114 0.5392428
+
+
+
+2024-06-26 10:16:35 : Pairwise Test 5 : Seqnames chr2
+
+2024-06-26 10:16:35 : 5_chr2_scMaty, Class = dgCMatrix
+5_chr2_scMaty: nRows = 1580, nCols = 228
+5_chr2_scMaty: NonZeroEntries = 118629, EntryRange = [ 0.044 , 40.061 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                   .                         .                  .    
+[2,]                      .                   .                         .                  .    
+[3,]                      .                   .                         .                  .    
+[4,]                      .                   .                         .                  .    
+[5,]                      .                   4.45                      .                  1.049
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                  .    
+[2,]                  .    
+[3,]                  .    
+[4,]                  .    
+[5,]                  7.999
+
+
+
+2024-06-26 10:16:35 : 5_chr2_diffResult, Class = data.frame
+5_chr2_diffResult: nRows = 1580, nCols = 8
+       log2Mean      log2FC          fdr         pval      mean1     mean2   n       auc
+f12950 5.351611 -0.12873124 0.0317524866 1.629827e-02 0.33342998 0.3653683 114 0.4262465
+f12951 5.007263 -0.58946737 0.0069478618 2.157761e-03 0.21650011 0.3301929 114 0.4005463
+f12952 4.418292 -0.43572145 0.0433744944 2.407559e-02 0.15067558 0.2068947 114 0.4506771
+f12953 4.414643 -1.51540131 0.0056008928 1.602281e-03 0.08819304 0.2684299 114 0.4174361
+f12954 7.509078 -0.04085212 0.1021711701 7.164915e-02 1.56651814 1.6117625 114 0.4319406
+f12955 5.706807 -1.02186952 0.0005940624 5.790228e-05 0.29358774 0.6051840 114 0.3550323
+
+
+
+2024-06-26 10:16:35 : Pairwise Test 5 : Seqnames chr20
+
+2024-06-26 10:16:36 : 5_chr20_scMaty, Class = dgCMatrix
+5_chr20_scMaty: nRows = 715, nCols = 228
+5_chr20_scMaty: NonZeroEntries = 32545, EntryRange = [ 0.054 , 66.556 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                      .                      .
+[2,]                      .                      .                      .                      .
+[3,]                      .                      .                      .                      .
+[4,]                      .                      .                      .                      .
+[5,]                      .                      .                      .                      .
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:36 : 5_chr20_diffResult, Class = data.frame
+5_chr20_diffResult: nRows = 715, nCols = 8
+       log2Mean     log2FC       fdr       pval      mean1      mean2   n       auc
+f14530 2.749964 -1.9905038 0.4933732 0.21201948 0.01495613 0.08551761 114 0.4814558
+f14531 3.082447 -0.5176334 0.6135727 0.33982488 0.05234212 0.07871924 114 0.4863804
+f14532 2.591439 -0.4551968 0.7247855 0.48048715 0.03582449 0.05236842 114 0.4913435
+f14533 3.031396  0.2327203 0.6820544 0.42544932 0.06871941 0.05717543 114 0.4876885
+f14534 3.078524 -1.4727025 0.1486139 0.01642027 0.03048252 0.10017537 114 0.4604494
+f14535 4.027066 -1.1240120 0.2762475 0.05447678 0.08118423 0.18728953 114 0.4614497
+
+
+
+2024-06-26 10:16:36 : Pairwise Test 5 : Seqnames chr21
+
+2024-06-26 10:16:36 : 5_chr21_scMaty, Class = dgCMatrix
+5_chr21_scMaty: nRows = 327, nCols = 228
+5_chr21_scMaty: NonZeroEntries = 18693, EntryRange = [ 0.062 , 199.883 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                 22.536                 30.507                 37.231                  30.91
+[2,]                 22.536                 30.507                 37.231                  30.91
+[3,]                 22.536                 30.507                 37.231                  30.91
+[4,]                 22.536                 30.507                 37.231                  30.91
+[5,]                 22.536                 30.507                 37.231                  30.91
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                 76.379
+[2,]                 76.379
+[3,]                 76.379
+[4,]                 76.379
+[5,]                 76.379
+
+
+
+2024-06-26 10:16:36 : 5_chr21_diffResult, Class = data.frame
+5_chr21_diffResult: nRows = 327, nCols = 8
+        log2Mean      log2FC       fdr        pval     mean1     mean2   n       auc
+f15245 12.534726 -0.02603088 0.9698974 0.851071991 51.572000 52.511131 114 0.4927670
+f15246 12.534858 -0.02597987 0.9698974 0.854221540 51.577649 52.515025 114 0.4929209
+f15247 12.534858 -0.02597987 0.9698974 0.854221540 51.577649 52.515025 114 0.4929209
+f15248 12.535173 -0.02649025 0.9698974 0.852646472 51.579710 52.535710 114 0.4928440
+f15249 12.535173 -0.02649025 0.9698974 0.852646472 51.579710 52.535710 114 0.4928440
+f15250  7.998822  0.52309419 0.1033942 0.009485707  2.637388  1.832632 114 0.5992613
+
+
+
+2024-06-26 10:16:36 : Pairwise Test 5 : Seqnames chr22
+
+2024-06-26 10:16:37 : 5_chr22_scMaty, Class = dgCMatrix
+5_chr22_scMaty: nRows = 561, nCols = 228
+5_chr22_scMaty: NonZeroEntries = 34795, EntryRange = [ 0.061 , 38.389 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                  .                          .
+[2,]                      .                      .                  2.137                      .
+[3,]                      .                      .                  2.495                      .
+[4,]                      .                      .                  0.580                      .
+[5,]                      .                      .                  1.934                      .
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                  .    
+[2,]                  2.321
+[3,]                  .    
+[4,]                  .    
+[5,]                  .    
+
+
+
+2024-06-26 10:16:37 : 5_chr22_diffResult, Class = data.frame
+5_chr22_diffResult: nRows = 561, nCols = 8
+       log2Mean     log2FC       fdr      pval      mean1       mean2   n       auc
+f15572 3.075789 0.44652938 0.9457895 0.6666307 0.07654385 0.053833304 114 0.4926516
+f15573 2.404085 0.98265685 1.0000000 0.9772305 0.05288590 0.022429826 114 0.5004617
+f15574 1.989501 1.66803045 0.7565589 0.1771585 0.04421928 0.007903483 114 0.5131579
+f15575 2.503985 0.04909097 1.0000000 0.9819395 0.04183336 0.040140363 114 0.5003463
+f15576 2.987413 0.20426975 0.9804720 0.8193997 0.06571060 0.055877261 114 0.4957679
+f15577 3.969979 1.34991801 0.7710845 0.2435697 0.18868420 0.068692943 114 0.5233918
+
+
+
+2024-06-26 10:16:37 : Pairwise Test 5 : Seqnames chr3
+
+2024-06-26 10:16:37 : 5_chr3_scMaty, Class = dgCMatrix
+5_chr3_scMaty: nRows = 1402, nCols = 228
+5_chr3_scMaty: NonZeroEntries = 87008, EntryRange = [ 0.047 , 60.31 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                  .                          .
+[2,]                      .                      .                  .                          .
+[3,]                      .                      .                  .                          .
+[4,]                      .                      .                  .                          .
+[5,]                      .                      .                  1.466                      .
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                  .    
+[2,]                  1.635
+[3,]                  0.751
+[4,]                  .    
+[5,]                  .    
+
+
+
+2024-06-26 10:16:37 : 5_chr3_diffResult, Class = data.frame
+5_chr3_diffResult: nRows = 1402, nCols = 8
+       log2Mean     log2FC          fdr         pval      mean1     mean2   n       auc
+f16133 4.542876 -0.6682418 0.0893935705 3.455871e-02 0.14917548 0.2422278 114 0.4468298
+f16134 4.991658 -0.4628724 0.0044526057 4.455888e-04 0.22592118 0.3147017 114 0.3951216
+f16135 3.629415 -0.5899171 0.0890401299 3.420138e-02 0.07789478 0.1216754 114 0.4529855
+f16136 4.814987 -0.7837779 0.0007115286 2.514281e-05 0.17267554 0.3036141 114 0.3680748
+f16137 4.896466 -0.4242521 0.0362748495 9.599122e-03 0.21435099 0.2906315 114 0.4185134
+f16138 6.156357 -0.1900813 0.0135054402 2.196320e-03 0.57573727 0.6580525 114 0.3915051
+
+
+
+2024-06-26 10:16:37 : Pairwise Test 5 : Seqnames chr4
+
+2024-06-26 10:16:38 : 5_chr4_scMaty, Class = dgCMatrix
+5_chr4_scMaty: nRows = 959, nCols = 228
+5_chr4_scMaty: NonZeroEntries = 60978, EntryRange = [ 0.051 , 35.677 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                      .                      .
+[2,]                      .                      .                      .                      .
+[3,]                      .                      .                      .                      .
+[4,]                      .                      .                      .                      .
+[5,]                      .                      .                      .                      .
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:38 : 5_chr4_diffResult, Class = data.frame
+5_chr4_diffResult: nRows = 959, nCols = 8
+       log2Mean      log2FC        fdr       pval      mean1      mean2   n       auc
+f17535 2.368070  2.90246214 0.16514717 0.05338438 0.07111405 0.00191228 114 0.5221607
+f17536 3.687565 -0.02967352 0.13218207 0.03735280 0.10308772 0.10541228 114 0.4445214
+f17537 3.573072 -0.62604358 0.06370923 0.01061175 0.07332461 0.11792985 114 0.4313250
+f17538 3.226200 -0.67008574 0.15802747 0.04959986 0.05458771 0.09204386 114 0.4622191
+f17539 4.507605  0.16317199 0.31907300 0.14439800 0.20203510 0.17949127 114 0.4671053
+f17540 5.212025  0.18763662 0.14709138 0.04371329 0.33748252 0.29525434 114 0.4371345
+
+
+
+2024-06-26 10:16:38 : Pairwise Test 5 : Seqnames chr5
+
+2024-06-26 10:16:38 : 5_chr5_scMaty, Class = dgCMatrix
+5_chr5_scMaty: nRows = 1162, nCols = 228
+5_chr5_scMaty: NonZeroEntries = 93386, EntryRange = [ 0.049 , 45.538 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                  .                      1.886                  1.143
+[2,]                      .                  5.698                  .                      2.739
+[3,]                      .                  3.188                  .                      .    
+[4,]                      .                  .                      .                      .    
+[5,]                      .                  .                      .                      .    
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                  .    
+[2,]                  .    
+[3,]                  .    
+[4,]                  .    
+[5,]                  3.686
+
+
+
+2024-06-26 10:16:38 : 5_chr5_diffResult, Class = data.frame
+5_chr5_diffResult: nRows = 1162, nCols = 8
+       log2Mean      log2FC       fdr       pval     mean1     mean2   n       auc
+f18494 5.865956  0.01753844 0.5820108 0.40370114 0.5059299 0.4997106 114 0.4701447
+f18495 5.277130  1.10196185 0.2933852 0.12565431 0.4553161 0.2074386 114 0.5340105
+f18496 5.654936  0.33266725 0.7701901 0.63911709 0.4839387 0.3824734 114 0.4858803
+f18497 4.980139 -0.42872513 0.1747545 0.04512013 0.2272544 0.3089298 114 0.4431363
+f18498 6.400273  0.39132259 0.8277513 0.71021349 0.8320179 0.6322718 114 0.5135426
+f18499 6.757470  0.42428069 1.0000000 0.99898344 1.0788514 0.8017360 114 0.5000769
+
+
+
+2024-06-26 10:16:38 : Pairwise Test 5 : Seqnames chr6
+
+2024-06-26 10:16:39 : 5_chr6_scMaty, Class = dgCMatrix
+5_chr6_scMaty: nRows = 1289, nCols = 228
+5_chr6_scMaty: NonZeroEntries = 108990, EntryRange = [ 0.058 , 41.233 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                  .                      .    
+[2,]                      .                      .                  0.659                  0.385
+[3,]                      .                      .                  0.486                  0.295
+[4,]                      .                      .                  .                      .    
+[5,]                      .                      .                  1.509                  0.914
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:39 : 5_chr6_diffResult, Class = data.frame
+5_chr6_diffResult: nRows = 1289, nCols = 8
+       log2Mean      log2FC         fdr         pval      mean1      mean2   n       auc
+f19656 3.682854 -0.34277203 0.266113213 0.1453403431 0.09056142 0.11720173 114 0.4671822
+f19657 4.608277  0.16223841 0.238198116 0.1247352429 0.21720180 0.19316667 114 0.4549477
+f19658 2.306554 -0.01633114 0.355591972 0.2253829645 0.03437719 0.03486841 114 0.4730686
+f19659 4.654264 -0.94419290 0.007376365 0.0003840457 0.14230711 0.28192109 114 0.3985457
+f19660 6.673896 -0.31209152 0.047500802 0.0092495743 0.79037756 0.98337716 114 0.4026624
+f19661 6.330388 -0.25016691 0.122314477 0.0456425626 0.63606189 0.75815777 114 0.4285934
+
+
+
+2024-06-26 10:16:39 : Pairwise Test 5 : Seqnames chr7
+
+2024-06-26 10:16:39 : 5_chr7_scMaty, Class = dgCMatrix
+5_chr7_scMaty: nRows = 1136, nCols = 228
+5_chr7_scMaty: NonZeroEntries = 86503, EntryRange = [ 0.059 , 73.969 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                  .                          .                  1.740
+[2,]                      .                  .                          .                  2.384
+[3,]                      .                  .                          .                  .    
+[4,]                      .                  0.655                      .                  .    
+[5,]                      .                  1.752                      .                  .    
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:39 : 5_chr7_diffResult, Class = data.frame
+5_chr7_diffResult: nRows = 1136, nCols = 8
+       log2Mean    log2FC       fdr      pval     mean1      mean2   n       auc
+f20945 5.683781 1.0263932 0.7050545 0.3934899 0.5960878 0.28817548 114 0.5256617
+f20946 5.651181 1.0928015 0.7882719 0.5310101 0.5914650 0.27264917 114 0.5156202
+f20947 3.912075 1.3979955 0.9059654 0.7591941 0.1826841 0.06387721 114 0.4959988
+f20948 4.629182 1.0236752 0.9369390 0.8255950 0.2822456 0.13436848 114 0.4933826
+f20949 6.135751 0.9590288 0.5754540 0.2527742 0.8057985 0.41024560 114 0.4610649
+f20950 5.723203 0.6679363 1.0000000 1.0000000 0.5600177 0.34922788 114 0.5000385
+
+
+
+2024-06-26 10:16:39 : Pairwise Test 5 : Seqnames chr8
+
+2024-06-26 10:16:40 : 5_chr8_scMaty, Class = dgCMatrix
+5_chr8_scMaty: nRows = 897, nCols = 228
+5_chr8_scMaty: NonZeroEntries = 45348, EntryRange = [ 0.042 , 41.782 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                      .                      .
+[2,]                      .                      .                      .                      .
+[3,]                      .                      .                      .                      .
+[4,]                      .                      .                      .                      .
+[5,]                      .                      .                      .                      .
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:40 : 5_chr8_diffResult, Class = data.frame
+5_chr8_diffResult: nRows = 897, nCols = 8
+       log2Mean      log2FC       fdr      pval      mean1      mean2   n       auc
+f22081 1.120684  0.01393315 0.8877235 0.6604455 0.01039474 0.01021052 114 0.4956910
+f22082 2.791397  0.48035585 0.9673204 0.8341356 0.06197366 0.04193856 114 0.5042321
+f22083 2.226663 -0.48061826 0.8287613 0.5506597 0.02550880 0.03906139 114 0.4911127
+f22084 2.900626  0.22980746 0.7805045 0.4846611 0.06193859 0.05152638 114 0.4877655
+f22085 2.472098 -1.46422258 0.5224249 0.1822954 0.01712280 0.06267545 114 0.4766851
+f22086 4.551547  0.55112872 0.8084153 0.5128075 0.23575448 0.15811391 114 0.5174669
+
+
+
+2024-06-26 10:16:40 : Pairwise Test 5 : Seqnames chr9
+
+2024-06-26 10:16:40 : 5_chr9_scMaty, Class = dgCMatrix
+5_chr9_scMaty: nRows = 986, nCols = 228
+5_chr9_scMaty: NonZeroEntries = 53704, EntryRange = [ 0.052 , 52.41 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                      .                      .
+[2,]                      .                      .                      .                      .
+[3,]                      .                      .                      .                      .
+[4,]                      .                      .                      .                      .
+[5,]                      .                      .                      .                      .
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:40 : 5_chr9_diffResult, Class = data.frame
+5_chr9_diffResult: nRows = 986, nCols = 8
+        log2Mean     log2FC       fdr      pval      mean1      mean2   n       auc
+f22978 3.7741029  0.4526961 0.8661689 0.5939672 0.12991245 0.09256143 114 0.4869960
+f22979 3.7737331 -0.4151582 0.6104322 0.2052731 0.09406154 0.12835083 114 0.4741074
+f22980 0.9582866  0.8493837 0.8784919 0.6376698 0.01314914 0.00339474 114 0.5046168
+f22981 4.9123862  0.2528759 0.8543415 0.5591312 0.27848242 0.23229819 114 0.4822253
+f22982 4.5070334  1.3317559 0.8388546 0.5096084 0.27671918 0.10464924 114 0.5156971
+f22983 5.7430434  0.3971410 1.0000000 0.9555258 0.52529828 0.39678049 114 0.5020006
+
+
+
+2024-06-26 10:16:40 : Pairwise Test 5 : Seqnames chrX
+
+2024-06-26 10:16:41 : 5_chrX_scMaty, Class = dgCMatrix
+5_chrX_scMaty: nRows = 956, nCols = 228
+5_chrX_scMaty: NonZeroEntries = 46622, EntryRange = [ 0.041 , 43.586 ]
+5 x 5 sparse Matrix of class "dgCMatrix"
+     HEK#GAACCGCGTGTTGTTG-1 HEK#AGTGTACTCTTACGGA-1 HEK#GGAACTTCAATGCCAT-1 HEK#TTACGGATCTCCTTGG-1
+[1,]                      .                      .                      .                   .   
+[2,]                      .                      .                      .                   .   
+[3,]                      .                      .                      .                   .   
+[4,]                      .                      .                      .                   .   
+[5,]                      .                      .                      .                   1.27
+     HEK#CACCTTGGTCAATCCA-1
+[1,]                      .
+[2,]                      .
+[3,]                      .
+[4,]                      .
+[5,]                      .
+
+
+
+2024-06-26 10:16:41 : 5_chrX_diffResult, Class = data.frame
+5_chrX_diffResult: nRows = 956, nCols = 8
+       log2Mean      log2FC       fdr      pval      mean1      mean2   n       auc
+f23964 2.975446 -0.76039423 0.6126271 0.3043911 0.04244736 0.07799116 114 0.4825331
+f23965 2.441484 -1.29793793 0.4956656 0.2065257 0.01878070 0.05897369 114 0.4779163
+f23966 3.453978 -0.36248543 0.6169283 0.3248549 0.07534210 0.09936833 114 0.4749538
+f23967 3.349013  0.83820744 0.7156540 0.4626299 0.10586860 0.05535089 114 0.5141582
+f23968 3.014445  0.05624491 0.8546978 0.6785728 0.06349121 0.06072817 114 0.4925362
+f23969 3.362610  0.71501393 0.9430011 0.8455474 0.10336837 0.05954386 114 0.4963835
+
+
+###########
+2024-06-26 10:16:41 : Completed Pairwise Tests, 0.209 mins elapsed.
+###########
+
+------- Completed
+
+End Time : 2024-06-26 10:16:41
+Elapsed Time Minutes = 0.220943848292033
+Elapsed Time Hours = 0.00368243469132317
+
+-------
+
+
+

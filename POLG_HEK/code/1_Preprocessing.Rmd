@@ -212,6 +212,7 @@ DimPlot(object = HEK, cols = color_vec)
 ```{r, echo=FALSE, eval=FALSE}
 p2 <- DimPlot(object = HEK, cols = color_vec) + theme_void() + NoLegend()
 ggsave(plot = p2, "../plot/12_UMAP.pdf", width = 5, height = 5)
+
 ```
 
 ```{r, fig.width=15, fig.height=5, fig.fullwidth=TRUE}
@@ -236,8 +237,103 @@ p4 <- VlnPlot(object = HEK,
 ggsave(plot = p4, "../plot/13_QC_filtered.pdf", width = 15, height = 4)
 ```
 
+```{r, include=FALSE}
+p4 <- FeaturePlot(object = HEK, features = "mtDNA_depth", min.cutoff = "q5", max.cutoff = "q95") + 
+        scale_color_viridis_c() +
+        theme_void() + ggtitle(NULL)
+p4.nl <- p4 + theme_void() + Seurat::NoLegend() 
+p4.leg <- ggpubr::get_legend(p4) %>% ggpubr::as_ggplot()
+ggsave(plot = p4.nl, "../plot/14_mtDepth_UMAP_q5_q95.pdf", width = 5, height = 5)
+ggsave(plot = p4.leg,"../plot/14_mtDepth_UMAP_leg.pdf", width = 3, height = 2)
+
+HEK$mtDNA_depth_norm <- HEK$mtDNA_depth/HEK$nCount_ATAC
+p4norm <- FeaturePlot(object = HEK, features = "mtDNA_depth_norm", min.cutoff = "q5", max.cutoff = "q95") + 
+        scale_color_viridis_c() +  # min 5, max 200
+        theme_void() + ggtitle(NULL)
+p4norm.nl <- p4norm + theme_void() + Seurat::NoLegend() 
+p4norm.leg <- ggpubr::get_legend(p4norm) %>% ggpubr::as_ggplot()
+ggsave(plot = p4norm.nl, "../plot/14_norm_mtDepth_UMAP_q5_q95.pdf", width = 5, height = 5)
+ggsave(plot = p4norm.leg,"../plot/14_norm_mtDepth_UMAP_leg.pdf", width = 3, height = 2)
+
+pA <- FeaturePlot(object = HEK, features = "nCount_ATAC", min.cutoff = "q5", max.cutoff = "q95") + 
+        scale_color_viridis_c() +
+        theme_void() + ggtitle(NULL)
+pA.nl <- pA + theme_void() + Seurat::NoLegend() 
+pA.leg <- ggpubr::get_legend(pA) %>% ggpubr::as_ggplot()
+ggsave(plot = pA.nl, "../plot/14_nCount_ATAC_UMAP_q5_q95.pdf", width = 5, height = 5)
+ggsave(plot = pA.leg,"../plot/14_nCount_ATAC_UMAP_leg.pdf", width = 3, height = 2)
+
+p5 <- ggplot(data = HEK@meta.data, aes(x=nCount_ATAC, y = mtDNA_depth, color = condition)) +
+  geom_point(size=0.01) + scale_color_manual(values = color_vec) + geom_smooth(method = "lm") +
+  facet_wrap(~condition) +
+  scale_x_continuous(limits = c(0, NA), expand = c(0,0)) +
+  scale_y_continuous(limits = c(0, NA), expand = c(0,0)) + 
+  theme_classic() + NoLegend()
+
+ggsave(plot = p5, "../plot/15_cor_ATAC_mtDepth.pdf", width = 9, height = 3)
+
+
+library(ggpubr)
+p6 <- ggscatter(
+  HEK@meta.data, x = "nCount_ATAC", y = "mtDNA_depth",
+  color = "condition", palette = color_vec,
+  add = "reg.line"
+  ) + facet_wrap(~condition) +
+  stat_cor(
+    aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~")), 
+    label.y = 150) + stat_regline_equation(label.y = 200) + NoLegend()
+
+ggsave(plot = p6, "../plot/15_cor_ATAC_mtDepth_equa.pdf", width = 9, height = 3)
+
+p7 <- ggplot(data = HEK@meta.data, aes(x=condition, y = mtDNA_depth/nCount_ATAC)) +
+  geom_violin(scale = "width", aes(fill = condition)) + geom_boxplot(width=0.1, outlier.size=0) + 
+  scale_fill_manual(values = color_vec) + ylab("Normalized mtDNA depth") +
+  theme_classic() + NoLegend()
+
+ggsave(plot = p7, "../plot/16_normalized_mtDNA_depth.pdf", width = 2.5, height = 2.5)
+
+HEK@meta.data %>% group_by(condition) %>% summarise(median(mtDNA_depth/nCount_ATAC))
+# CTRL: 0.00298; KI36: 0.00741; KIA2: 0.00560
+
+library(rstatix)
+
+stat.test <- HEK@meta.data %>% select(condition, mtDNA_depth_norm) %>% 
+  wilcox_test(mtDNA_depth_norm ~ condition) %>%
+  adjust_pvalue() %>%
+  add_significance("p.adj")
+stat.test
+write.csv(stat.test, file = "../output/1_mtDNA_depth_norm_wilcox.test.csv", 
+          quote = FALSE, row.names = TRUE)
+
+
+summarizer <- function(data, numeric_cols = NULL, ...) {
+  data %>%
+    group_by(...) %>%
+    summarise(across({{numeric_cols}}, list(
+      min = ~min(.x),
+      q05 = ~quantile(.x, 0.05, na.rm = TRUE),
+      median = ~median(.x, na.rm = TRUE),
+      q95 = ~quantile(.x, 0.95, na.rm = TRUE),
+      max = ~max(.x)
+    ), .names = "{col}_{fn}"))
+}
+
+feature.stat <- summarizer(HEK@meta.data, numeric_cols = c("nCount_ATAC", "mtDNA_depth","mtDNA_depth_norm"), condition) %>% 
+  tidyr::pivot_longer(cols = -condition, names_to = "name", values_to = "value") %>% 
+  mutate(
+    feature = sub("^(.*)_[^_]+$", "\\1", name),
+    stat = sub("^.*_([^_]+)$", "\\1", name) 
+  ) %>% 
+  select(condition, feature, stat, value) %>% 
+  tidyr::pivot_wider(names_from = condition, values_from = value) %>% 
+  mutate(All=unlist(summarizer(HEK@meta.data, numeric_cols = c("nCount_ATAC", "mtDNA_depth","mtDNA_depth_norm"))))
+write.csv(feature.stat, file = "../output/1_features_stats.csv", 
+          quote = FALSE, row.names = TRUE)
+```
+
 ```{r, echo=FALSE, eval=FALSE}
 # save RDS file
+HEK <- readRDS("../POLG_HEK_large_data_files/output/1_POLG_HEK_preprocesssed_seurat.rds")
 saveRDS(HEK, "../POLG_HEK_large_data_files/output/1_POLG_HEK_preprocesssed_seurat.rds")
 HEK.metadata <- cbind(HEK@meta.data, HEK@reductions$atac.umap@cell.embeddings)
 write.csv(HEK.metadata, file = "../output/1_HEK_metadata.csv", 

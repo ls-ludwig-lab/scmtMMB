@@ -1,0 +1,4 @@
+,.y.,group1,group2,n1,n2,statistic,p,p.adj,p.adj.signif
+1,mtDNA_depth_norm,CTRL,KI36,1244,1617,199733,1.85e-296,5.55e-296,****
+2,mtDNA_depth_norm,CTRL,KIA2,1244,1894,381685.5,8.75e-226,1.75e-225,****
+3,mtDNA_depth_norm,KI36,KIA2,1617,1894,2081740,1.71e-75,1.71e-75,****
