@@ -236,5 +236,102 @@ lapply(c("CI", "CIII", "CIV", "CV", "tRNA", "rRNA", "Total"), function(cat){
 
 })
 
+
 ```
+```{r}
+scmtMMB_HEK <- read.csv("../output/5_scmtMMB_HEK.csv", row.names = "X")
+# scmtMMB_HEK %>%
+#           ggplot(aes(x = sample, y = mutation_per_MB + 1)) +
+#           geom_jitter(aes(fill = sample), size = 0.1, color = "grey") + 
+#           geom_violin(aes(fill = sample), scale = "width", alpha = 0.8) +
+#          #scale_fill_manual(values = color_vec) +
+#           geom_point(data = . %>% filter(barcode == "pseudobulk"), 
+#                      aes(group = sample), shape = 23, size = 2, fill = "white") + # overlay bulk data as point
+#           facet_wrap(~symbol, ncol =10) + 
+#           theme_bw() + xlab(NULL) +
+#           scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x), 
+#                              labels = trans_format("log10", math_format(10^.x))) + 
+#           theme(aspect.ratio=1/1, axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()) +
+#           labs(y = bquote(paste(log[10], "(Mutation per MB + 1)")))
+
+lapply(unique(scmtMMB_HEK$symbol), function(cat){
+  
+  df <- scmtMMB_HEK %>% dplyr::filter(symbol == cat & barcode != "pseudobulk") %>% 
+                       mutate(log10_MpMB = log10(mutation_per_MB), log2_MSSw = log2(MSS_weighted)) %>% 
+                       mutate(log10_MpMB = ifelse(is.infinite(log10_MpMB), NA, log10_MpMB),
+                              log2_MSSw = ifelse(is.infinite(log2_MSSw), NA, log2_MSSw))
+  
+  p <- ggplot(df, aes(x = atacUMAP_1, y = atacUMAP_2, color = log10_MpMB)) +
+  geom_point(size = 0.01) + 
+  scale_color_gradientn(colors = BuenColors::jdb_palette("solar_extra"), 
+                        limit = quantile(df$log10_MpMB, c(0.02,0.98), na.rm =TRUE)) +
+  theme(aspect.ratio=1) + theme_classic() + ggtitle(paste0("MpMB_", cat)) 
+  p.nl <- p + theme_void() + Seurat::NoLegend() 
+  p.leg <- ggpubr::get_legend(p) %>% ggpubr::as_ggplot()
+  ggsave(plot = p.nl, paste0("../plot/5a_MpMB_UMAP/MpMB_", cat,".pdf"), width = 2, height = 2)
+  ggsave(plot = p.leg, paste0("../plot/5a_MpMB_UMAP/MpMB_", cat,".leg.pdf"), width = 3, height = 2)
+  
+  p <- ggplot(df, aes(x = atacUMAP_1, y = atacUMAP_2, color = log2_MSSw)) +
+  geom_point(size = 0.01) + scale_colour_viridis_c() +
+  theme(aspect.ratio=1) + theme_classic() + ggtitle(paste0("MSS_weighted_", cat))
+  p.nl <- p + theme_void() + Seurat::NoLegend() 
+  p.leg <- ggpubr::get_legend(p) %>% ggpubr::as_ggplot()
+  ggsave(plot = p.nl, paste0("../plot/5a_MSSw_UMAP/MSSw_", cat,".pdf"), width = 2, height = 2)
+  ggsave(plot = p.leg, paste0("../plot/5a_MSSw_UMAP/MSSw_", cat,".leg.pdf"), width = 3, height = 2)
+
+})
+
+
+```
+
+```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=6}
+
+scmtMMB_HEK %>% dplyr::select(barcode, sample, symbol, mutation_per_MB) %>% 
+  dplyr::filter(grepl("CI|CV|RNA", symbol)) %>% 
+  mutate(mutation_per_MB = log10(mutation_per_MB + 1)) %>% 
+  tidyr::pivot_wider(names_from = symbol, values_from = mutation_per_MB) %>% 
+  dplyr::filter(sample == "KIA2") %>% dplyr::select(-sample, -barcode) %>% 
+  dplyr::select(CI, CIII, CIV, CV, tRNA, rRNA) %>% 
+  psych::pairs.panels(., digits = 3, pch = 21, bg="#000090", smooth = FALSE, ellipses = FALSE)
+
+  
+scmtMMB_HEK %>% dplyr::select(barcode, sample, symbol, mutation_per_MB) %>% 
+  dplyr::filter(grepl("CI|CV|RNA", symbol)) %>% 
+  mutate(mutation_per_MB = log10(mutation_per_MB + 1)) %>% 
+  tidyr::pivot_wider(names_from = symbol, values_from = mutation_per_MB) %>% 
+  dplyr::filter(sample == "KI36") %>% dplyr::select(-sample, -barcode) %>% 
+  dplyr::select(CI, CIII, CIV, CV, tRNA, rRNA) %>% 
+  psych::pairs.panels(., digits = 3, pch = 21, bg="#960096", smooth = FALSE, ellipses = FALSE)
+
+scmtMMB_HEK %>% dplyr::select(barcode, sample, symbol, mutation_per_MB) %>% 
+  dplyr::filter(grepl("CI|CV|RNA", symbol)) %>% 
+  mutate(mutation_per_MB = log10(mutation_per_MB + 1)) %>% 
+  tidyr::pivot_wider(names_from = symbol, values_from = mutation_per_MB) %>% 
+  dplyr::filter(sample == "CTRL") %>% dplyr::select(-c(sample, barcode)) %>%
+  select(CI, CIII, CIV, CV, tRNA, rRNA) %>% 
+  psych::pairs.panels(., digits = 3, pch = 21, bg="#2780FF", smooth = FALSE, ellipses = FALSE)
+```
+
+```{r}
+df.list <- scmtMMB_HEK %>% select(barcode, sample, symbol, mutation_per_MB) %>% 
+  dplyr::filter(!grepl("CI|CV|RNA|Total", symbol)) %>%
+  pivot_wider(names_from = symbol, values_from = mutation_per_MB) %>% 
+  select(-barcode) %>% 
+  group_split(sample, .keep = FALSE)
+  
+names(df.list) <- c("CTRL", "KI36", "KIA2")
+df.list <- lapply(df.list, function(M){as.matrix(M) %>% replace(!is.finite(.), 0)})
+cor.list <- lapply(df.list, function(M){cor(M, use = "complete.obs")})  
+cor.list <- lapply(cor.list, function(M){
+  M <- M %>% replace(!is.finite(.), 0)
+  colnames(M) <- gsub(pattern = "MT_", replacement = "", colnames(M))
+  rownames(M) <- gsub(pattern = "MT_", replacement = "", rownames(M))
+  M
+})
+
+corrplot::corrplot(cor.list$KIA2, order = 'hclust', type = 'upper', tl.col="black",diag = FALSE, insig = 'label_sig')
+corrplot::corrplot(cor.list$KI36, order = 'hclust', type = 'upper', tl.col="black",diag = FALSE, insig = 'label_sig')
+corrplot::corrplot(cor.list$CTRL, order = 'hclust', type = 'upper', tl.col="black",diag = FALSE, insig = 'label_sig')
+
+
 ```
