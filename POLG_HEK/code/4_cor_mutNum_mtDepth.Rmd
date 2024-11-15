@@ -30,7 +30,7 @@ library(scales)
 ```{r data loading, message=FALSE, warning=FALSE}
 # Load the seurat object
 mtVar.bulk.df <- read.csv("../output/2_mtVar.bulk.meta.csv", row.names = "X")
-CTRL_dnV <- mtVar.bulk.df %>% filter(occurrence == "Private" & condition == "CTRL") %>% pull(variant)
+CTRL_dnV <- mtVar.bulk.df %>% filter(occurrence == "de-novo" & condition == "CTRL") %>% pull(variant)
 KI36_dnV <- mtVar.bulk.df %>% filter(occurrence != "Parental" & condition == "KI36") %>% pull(variant)
 KIA2_dnV <- mtVar.bulk.df %>% filter(occurrence != "Parental" & condition == "KIA2") %>% pull(variant)
 
@@ -112,7 +112,33 @@ ggsave("../plot/42_leg.pdf", p2.leg, width = 2, height = 2)
   ylab("Number of mutations") +  xlab("mtDNA depth") +
   theme_classic())
 p3.nl <- p3 +Seurat::NoLegend() + theme(strip.background = element_blank(),strip.text.x = element_blank())
-ggsave(plot = p3.nl, "../plot/43_depth_MMB_cutoff.pdf", width = 8, height = 4)
-ggsave(plot = p3, "../plot/43_depth_MMB_cutoff.ori.pdf", width = 8, height = 4)
+# ggsave(plot = p3.nl, "../plot/43_depth_MMB_cutoff.pdf", width = 8, height = 4)
+# ggsave(plot = p3, "../plot/43_depth_MMB_cutoff.ori.pdf", width = 8, height = 4)
 
+
+MutNum %>% tidyr::pivot_longer(cols = -c("condition", "atacUMAP_1", "atacUMAP_2", "mtDNA_depth"), 
+                               names_to = "cut_off", values_to = "Num") %>%  
+  filter(cut_off == "cut_off_0.03" & condition == "KIA2") %>% 
+  mutate(depth_cutoff = ifelse(mtDNA_depth > 34, "> 34", "<= 34")) %>% 
+  ggplot(aes(x=mtDNA_depth, y = Num, color = depth_cutoff)) +
+  geom_point(size = 0.01) + scale_color_manual(values = c("blue", "firebrick")) + #xlim(NA, 150) +
+  # facet_wrap(~condition, ncol = 4, scales = "free_y") + 
+  geom_smooth(method = "lm") +
+  geom_vline(xintercept = 34, linetype = "dashed") +
+  ylab("Number of mutations") +  xlab("mtDNA depth") +
+  theme_classic()
+
+```
+
+```{r}
+library(chngpt)
+
+df2 <- MutNum %>% tidyr::pivot_longer(cols = -c("condition", "atacUMAP_1", "atacUMAP_2", "mtDNA_depth"), 
+                               names_to = "cut_off", values_to = "Num") %>%  
+  filter(cut_off == "cut_off_0.03" & condition == "KIA2") 
+
+set.seed(123)
+fit=chngptm(formula.1=Num~1, formula.2=~mtDNA_depth, df2, type="segmented", family="gaussian", 
+        var.type="bootstrap", ci.bootstrap.size=10000)
+plot(fit)
 ```

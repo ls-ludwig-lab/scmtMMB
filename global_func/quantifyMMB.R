@@ -3,6 +3,7 @@ library(dplyr)
 mtGene <- fread("~/Ludwig_lab/scmtMMB/database/Coding_region.tsv") %>% mutate(Length = Ending - Starting + 1)
 mtGene$Positions <- sapply(1:37, function(i) mtGene$Starting[i]:mtGene$Ending[i])
 mtRegion <- sapply(unique(mtGene$Region), function(x) unique(unlist(mtGene$Positions[mtGene$Region == x])))
+GenePos <- sapply(unique(mtGene$Symbol), function(x) unique(unlist(mtGene$Positions[mtGene$Symbol == x])))
 MLC_score <- fread("~/Ludwig_lab/scmtMMB//database/MLC_score.tsv") # Mitochondrial local constraint (MLC) 
 
 

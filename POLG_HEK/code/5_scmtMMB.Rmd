@@ -59,6 +59,8 @@ md <- HEK_metadata %>% dplyr::select(atacUMAP_1, atacUMAP_2,seurat_clusters, mtD
 scmtMMB_HEK <- scmtMMB_HEK %>% left_join(., md, by = "barcode")
 
 write.csv(scmtMMB_HEK, "../output/5_scmtMMB_HEK.csv", quote = FALSE, row.names = TRUE)
+#scmtMMB_HEK <- read.csv("../output/5_scmtMMB_HEK.csv", row.names = "X")
+
 ```
 
 ### Single cell MMB at Complex level
@@ -81,6 +83,9 @@ scmtMMB_HEK_com <- scmtMMB_HEK %>% filter(symbol %in% c("CI", "CIII", "CIV", "CV
                              labels = trans_format("log10", math_format(10^.x))) + 
           theme(aspect.ratio=1/1, axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()) +
           labs(y = bquote(paste(log[10], "(MSS + 1)"))))
+
+
+
 
 ggsave(plot = p1, "../plot/51_MSS_complex.pdf", width = 14, height = 2.5)
 ```
@@ -133,7 +138,12 @@ ggsave(plot = p3, "../plot/53_mutation_per_MB_complex.pdf", width = 14, height =
   theme_bw() + ylab("Mutation per MB (Total)") + theme(legend.position="none") +
   geom_smooth(method = "lm"))
 ggsave(plot = p4, paste0("../plot/54_CorDepth_MpMB.pdf"))
-
+scmtMMB_HEK %>% filter(symbol == "Total") %>% 
+   ggplot(aes(x = mtDNA_depth, y = mutation_per_MB + 1)) +
+  geom_point(aes(col = sample)) + facet_wrap(~sample) + 
+  scale_color_manual(values = color_vec) + 
+  theme_bw() + ylab("Mutation per MB (Total)") + theme(legend.position="none") +
+  geom_smooth(method = "lm")
 
 (p5 <- scmtMMB_HEK %>% filter(symbol == "Total") %>% ggplot(aes(x = log10(mtDNA_depth), y = MSS_weighted, col = sample)) +
   geom_point() + facet_wrap(~sample) + scale_color_manual(values = color_vec) + 
@@ -239,7 +249,7 @@ lapply(c("CI", "CIII", "CIV", "CV", "tRNA", "rRNA", "Total"), function(cat){
 
 ```
 ```{r}
-scmtMMB_HEK <- read.csv("../output/5_scmtMMB_HEK.csv", row.names = "X")
+
 # scmtMMB_HEK %>%
 #           ggplot(aes(x = sample, y = mutation_per_MB + 1)) +
 #           geom_jitter(aes(fill = sample), size = 0.1, color = "grey") + 
@@ -333,5 +343,15 @@ corrplot::corrplot(cor.list$KIA2, order = 'hclust', type = 'upper', tl.col="blac
 corrplot::corrplot(cor.list$KI36, order = 'hclust', type = 'upper', tl.col="black",diag = FALSE, insig = 'label_sig')
 corrplot::corrplot(cor.list$CTRL, order = 'hclust', type = 'upper', tl.col="black",diag = FALSE, insig = 'label_sig')
 
+scmtMMB_HEK %>% 
+  dplyr::filter(grepl("Total", symbol)) %>% 
+  group_by(sample) %>% 
+  summarize(across(c(mutation_per_MB, MSS_weighted), mean))
+
+scmtMMB_HEK %>% 
+  dplyr::filter(grepl("CI|CV|RNA|Total", symbol)) %>% 
+  group_by(sample, symbol) %>% 
+  summarize(across(c(mutation_per_MB, MSS_weighted), median)) %>% 
+  print(21)
 
 ```

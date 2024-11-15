@@ -267,10 +267,10 @@ p5 <- ggplot(data = HEK@meta.data, aes(x=nCount_ATAC, y = mtDNA_depth, color = c
   geom_point(size=0.01) + scale_color_manual(values = color_vec) + geom_smooth(method = "lm") +
   facet_wrap(~condition) +
   scale_x_continuous(limits = c(0, NA), expand = c(0,0)) +
-  scale_y_continuous(limits = c(0, NA), expand = c(0,0)) + 
+  scale_y_continuous(limits = c(0, 150), expand = c(0,0)) + 
   theme_classic() + NoLegend()
 
-ggsave(plot = p5, "../plot/15_cor_ATAC_mtDepth.pdf", width = 9, height = 3)
+ggsave(plot = p5, "../plot/15_cor_ATAC_mtDepth.pdf", width = 6, height = 2)
 
 
 library(ggpubr)
@@ -288,7 +288,7 @@ ggsave(plot = p6, "../plot/15_cor_ATAC_mtDepth_equa.pdf", width = 9, height = 3)
 p7 <- ggplot(data = HEK@meta.data, aes(x=condition, y = mtDNA_depth/nCount_ATAC)) +
   geom_violin(scale = "width", aes(fill = condition)) + geom_boxplot(width=0.1, outlier.size=0) + 
   scale_fill_manual(values = color_vec) + ylab("Normalized mtDNA depth") +
-  theme_classic() + NoLegend()
+  theme_classic() + NoLegend() + scale_y_log10()
 
 ggsave(plot = p7, "../plot/16_normalized_mtDNA_depth.pdf", width = 2.5, height = 2.5)
 
@@ -333,7 +333,7 @@ write.csv(feature.stat, file = "../output/1_features_stats.csv",
 
 ```{r, echo=FALSE, eval=FALSE}
 # save RDS file
-HEK <- readRDS("../POLG_HEK_large_data_files/output/1_POLG_HEK_preprocesssed_seurat.rds")
+# HEK <- readRDS("../POLG_HEK_large_data_files/output/1_POLG_HEK_preprocesssed_seurat.rds")
 saveRDS(HEK, "../POLG_HEK_large_data_files/output/1_POLG_HEK_preprocesssed_seurat.rds")
 HEK.metadata <- cbind(HEK@meta.data, HEK@reductions$atac.umap@cell.embeddings)
 write.csv(HEK.metadata, file = "../output/1_HEK_metadata.csv", 
