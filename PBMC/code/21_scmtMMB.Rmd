@@ -77,8 +77,8 @@ scmtMMB <- left_join(scmtMMB, md %>% select(predicted.celltype.l1, predicted.cel
                                  refUMAP_1, refUMAP_2, SID, mtDNA_depth, barcode, X3243A_G), 
           by = c("barcode", "sample" = "SID"))
 
-write.csv(scmtMMB, "../output/2_scmtMMB.csv", quote = FALSE, row.names = TRUE)
-scmtMMB <- read.csv("../output/2_scmtMMB.csv", row.names = "X")
+write.csv(scmtMMB, "../PBMC_large_data_files/output/2_scmtMMB.csv", quote = FALSE, row.names = TRUE)
+#scmtMMB <- read.csv("../PBMC_large_data_files/output/2_scmtMMB.csv", row.names = "X")
 ```
 
 ```{r Calculate MMB exclude 3243AG}
@@ -97,8 +97,8 @@ scmtMMB_ex <- left_join(scmtMMB_ex, md %>% select(predicted.celltype.l1, predict
                                  refUMAP_1, refUMAP_2, SID, mtDNA_depth, barcode, X3243A_G), 
           by = c("barcode", "sample" = "SID"))
 
-write.csv(scmtMMB_ex, "../output/2_scmtMMB_exclude_3243.csv", quote = FALSE, row.names = TRUE)
-scmtMMB_ex <- read.csv("../output/2_scmtMMB_exclude_3243.csv", row.names = "X")
+write.csv(scmtMMB_ex, "../PBMC_large_data_files/output/2_scmtMMB_exclude_3243.csv", quote = FALSE, row.names = TRUE)
+# scmtMMB_ex <- read.csv("../PBMC_large_data_files/output/2_scmtMMB_exclude_3243.csv", row.names = "X")
 
 ```
 

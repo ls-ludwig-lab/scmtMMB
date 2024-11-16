@@ -70,13 +70,13 @@ scmtMMB_exMax <- left_join(scmtMMB_exMax, md %>% select(predicted.celltype.l1, p
                                             refUMAP_1, refUMAP_2, SID, mtDNA_depth, barcode, X3243A_G), 
                      by = c("barcode", "sample" = "SID"))
 
-write.csv(scmtMMB_exMax, "../output/2_scmtMMB_exMax.csv", quote = FALSE, row.names = TRUE)
+write.csv(scmtMMB_exMax, "../PBMC_large_data_files/output/2_scmtMMB_exMax.csv", quote = FALSE, row.names = TRUE)
 
-scmtMMB <- read.csv("../output/2_scmtMMB.csv", row.names = "X")
+scmtMMB <- read.csv("../PBMC_large_data_files/output/2_scmtMMB.csv", row.names = "X")
 scmtMMB$ex <- "all"
-scmtMMB_ex <- read.csv("../output/2_scmtMMB_exclude_3243.csv", row.names = "X") 
+scmtMMB_ex <- read.csv("../PBMC_large_data_files/output/2_scmtMMB_exclude_3243.csv", row.names = "X") 
 scmtMMB_ex$ex <- "-3243"
-scmtMMB_exMax <- read.csv("../output/2_scmtMMB_exMax.csv", row.names = "X")
+scmtMMB_exMax <- read.csv("../PBMC_large_data_files/output/2_scmtMMB_exMax.csv", row.names = "X")
 scmtMMB_exMax$ex <- "-3243-max"
 
 color_vec <- c("M80" = "darkorchid4","M60" = "firebrick4", "M35" = "violetred3", 
