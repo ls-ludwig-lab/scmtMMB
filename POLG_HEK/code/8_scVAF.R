@@ -40,7 +40,13 @@ lapply(c("CTRL","KI36", "KIA2"), function(condt){
   write.csv(VAF.long, paste0("../output/scVAF/", condt, "_coc.csv")) # cell of choice
   
   lapply(unique(VAF.long$ID),function(cell){
-    p <- VAF.long %>% filter(ID == cell & VAF != 0) %>% 
+    
+    filtered_data <- VAF.long %>% filter(ID == cell & VAF != 0)
+    
+    # Count the number of rows in the filtered dataframe
+    num_rows <- nrow(filtered_data)
+    
+    p <- filtered_data %>% 
       ggplot() +
       geom_segment(aes(x=Position, xend=Position, y=0, yend=VAF)) +
       geom_point(aes(x = Position, y = VAF), size=0.1, color="red", fill=alpha("orange", 0.3), alpha=0.7, shape=21, stroke=2) +
@@ -54,8 +60,8 @@ lapply(c("CTRL","KI36", "KIA2"), function(condt){
       coord_polar() + 
       guides(fill=guide_legend(ncol=2))+
       theme_void() + NoLegend() + theme(aspect.ratio=1/1) + 
-      ggtitle(paste0(condt, "_",cell))
-    ggsave(plot = p, filename = paste0("../plot/scVAF/", condt,"/", cell,".pdf"), width = 5, height = 5)
+      ggtitle(paste0(condt, "_",cell, "; number of variant:", num_rows))
+      ggsave(plot = p, filename = paste0("../plot/scVAF/", condt,"/", cell,".pdf"), width = 5, height = 5)
   })
   
   count.long <- as.data.frame(assay(mmtx)[,CellID] * assays(mmtx)$coverage[,CellID]) %>% 

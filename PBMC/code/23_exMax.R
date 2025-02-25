@@ -85,7 +85,7 @@ color_vec <- c("M80" = "darkorchid4","M60" = "firebrick4", "M35" = "violetred3",
 create_violin_plot <- function(data, y_var, y_label, pseudobulk_filter, plot_file) {
   plot <- data %>%
     filter(symbol == "Total") %>%
-    mutate(X3243 = factor(ex, levels = c("all", "-3243", "-3243-max"))) %>%
+    mutate(X3243 = factor(ex, levels = c("-3243", "-3243-max"))) %>%
     group_by(sample, ex) %>%
     mutate(
       q5 = quantile(.data[[y_var]], 0.05),
@@ -95,7 +95,7 @@ create_violin_plot <- function(data, y_var, y_label, pseudobulk_filter, plot_fil
     ungroup() %>%
     ggplot(aes(x = sample, y = .data[[y_var]])) +
     geom_violin(aes(fill = X3243), scale = "width", alpha = 0.8) +
-    scale_fill_manual(values = c("firebrick", "darkslategray3", "goldenrod2")) +
+    scale_fill_manual(values = c("darkslategray3", "goldenrod2")) +
     geom_point(
       data = . %>% filter(symbol == "Total" & barcode == pseudobulk_filter),
       aes(group = interaction(sample, X3243)), shape = 23, size = 1, fill = "white",
@@ -112,7 +112,6 @@ create_violin_plot <- function(data, y_var, y_label, pseudobulk_filter, plot_fil
 
 # Prepare data
 filtered_data <- rbind(
-  scmtMMB %>% filter(!sample %in% c("H05", "H47")),
   scmtMMB_ex,
   scmtMMB_exMax
 )
@@ -121,14 +120,28 @@ filtered_data <- rbind(
 P1 <- create_violin_plot(filtered_data, "mutation_per_MB", "Total scMPM", "pseudobulk", "../plot/22_scMPM_total_pm_MELAS_q5_q95.pdf")
 P1.nl <- P1 + Seurat::NoLegend()
 P1.leg <- ggpubr::get_legend(P1) %>% ggpubr::as_ggplot()
-ggsave(plot = P1.nl, "../plot/22_scMPM_total_pm_MELAS_q5_q95.pdf", width = 3, height = 3)
-ggsave(plot = P1.leg, "../plot/22_scMPM_total_pm_MELAS_leg_q5_q95.pdf", width = 3, height = 3)
+ggsave(plot = P1.nl, "../plot/23_scMPM_total_pm_MELAS_q5_q95.pdf", width = 3, height = 3)
+ggsave(plot = P1.leg, "../plot/23_scMPM_total_pm_MELAS_leg_q5_q95.pdf", width = 3, height = 3)
+
+
+df_wide <- filtered_data %>% filter(symbol == "Total") %>% 
+  select(barcode, sample, mutation_per_MB, ex) %>% 
+  pivot_wider(names_from = ex, values_from = mutation_per_MB)
+
+perform_paired_ttest <- function(data) {
+  t_test_result <- t.test(data$`-3243`, data$`-3243-max`, paired = TRUE)
+  return(t_test_result)
+}
+
+results <- df_wide %>%
+  group_by(sample) %>%
+  summarise(t_test = list(perform_paired_ttest(cur_data()))) # all p-value < 2.2e-16
 
 # Generate P2 and save plots
 P2 <- create_violin_plot(filtered_data, "MSS_weighted", "Total scwMSS", "pseudobulk", "../plot/22_scwMSS_total_pm_MELAS_q5_q95.pdf")
 P2.nl <- P2 + Seurat::NoLegend()
 P2.leg <- ggpubr::get_legend(P2) %>% ggpubr::as_ggplot()
-ggsave(plot = P2.nl, "../plot/22_scwMSS_total_pm_MELAS_q5_q95.pdf", width = 3, height = 3)
+ggsave(plot = P2.nl, "../plot/23_scwMSS_total_pm_MELAS_q5_q95.pdf", width = 3, height = 3)
 
 
 theme_1_nogrid <- theme(aspect.ratio=1/1, axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), 
