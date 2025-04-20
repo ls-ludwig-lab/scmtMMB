@@ -6,10 +6,10 @@ library(ggplot2)
 library(viridis)
 library(BuenColors)
 library(ggrepel)
+'%ni%' <- Negate('%in%')
 
-scmtMMB <- read.csv("../output/2_scmtMMB.csv", row.names = "X") %>% filter(barcode != "pseudobulk")
 
-scmtMMB <- read.csv("../output/2_scmtMMB.csv", row.names = "X") %>% 
+scmtMMB <- read.csv("../PBMC_large_data_files/output/2_scmtMMB.csv", row.names = "X") %>% 
   filter(symbol == "Total" & barcode != "pseudobulk") %>%
   mutate(
     celltype = case_when(
@@ -21,7 +21,18 @@ scmtMMB <- read.csv("../output/2_scmtMMB.csv", row.names = "X") %>%
       predicted.celltype.l2 %in% c("Doublet", "Eryth", "Platelet", "ASDC", NA) ~ "discard",
       TRUE ~ predicted.celltype.l2
     )
-  ) %>% filter(celltype != "discard")
+  ) %>% filter(celltype %ni% c("discard", "MAIT", "Treg", "HSPC", "dnT", "gdT"))
+
+apply_quantile_filter <- function(data, value_col, lower_quantile = 0.05, upper_quantile = 0.95) {
+  data %>%
+    group_by(sample, symbol) %>%
+    mutate(
+      q5 = quantile({{ value_col }}, lower_quantile),
+      q95 = quantile({{ value_col }}, upper_quantile)
+    ) %>%
+    filter({{ value_col }} >= q5, {{ value_col }} <= q95) %>%
+    ungroup()
+}
 
 
 ##########  H05  ###############

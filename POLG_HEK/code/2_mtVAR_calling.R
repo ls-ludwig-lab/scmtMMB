@@ -1,5 +1,5 @@
 setwd("~/Ludwig_lab/scmtMMB/POLG_HEK/code")
-ource("../../global_func/variant_calling.R")
+source("../../global_func/variant_calling.R")
 source("../../global_func/mtGene_color.R")
 library(Matrix)
 library(Seurat)
