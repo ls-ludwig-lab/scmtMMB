@@ -1,6 +1,6 @@
-# Single-Cell Mitochondrial Mutational bureden analysis
+# Single-Cell Mitochondrial Mutational burden analysis
 
-*Yu-Hisn Hsieh*
+*Yu-Hsin Hsieh*
 
 This repository contains code needed to reproduce analyses and figures for the following work:
 
