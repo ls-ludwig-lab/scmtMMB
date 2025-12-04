@@ -7,11 +7,16 @@ This repository contains code needed to reproduce analyses and figures for the f
 *Hsieh et al., Single-cell multi-omics resolved analysis of mitochondrial genome-wide mutational burden, constraint, and mosaicism*
 
 - The `POLG_HEK` folder contains code for generating Figures 1-4 and Extended Data Figures 1-6.
-Fig1, Ext Fig1: 1_Preprocessing, 2_mtVAR_calling, 3_Mutational_Signature
-Ext Fig2: 7_ArchR, 7_ArchR_helperfunction
-Fig2, Ext Fig3: 2_mtVAR_visulization, 4_cor_mutNum_mtDepth
-Fig3, Ext Fig4: 6_VAF_dist_function, 6_VAF_dist_function
-Fig4, Ext Fig5-6: 8_scVAF, 5_1_scmtMMB, 5_2_scmtMMB_vis, 9_KI36_clonaltype
+
+        Fig1, Ext Fig1: 1_Preprocessing, 2_mtVAR_calling, 3_Mutational_Signature
+
+        Ext Fig2: 7_ArchR, 7_ArchR_helperfunction
+
+        Fig2, Ext Fig3: 2_mtVAR_visulization, 4_cor_mutNum_mtDepth
+
+        Fig3, Ext Fig4: 6_VAF_dist_function, 6_VAF_dist_function
+
+        Fig4, Ext Fig5-6: 8_scVAF, 5_1_scmtMMB, 5_2_scmtMMB_vis, 9_KI36_clonaltype
 
 - The `POLG_downsampling_analysis` folder contains code for Extended Data Fig. 7 
 
