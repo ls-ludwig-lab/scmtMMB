@@ -1,7 +1,7 @@
 ##################################
 # code source: caleblareau/mtscATACpaper_reproducibility/figure_paired_cd34_pbmc/code/10_mutational_signature.R
 ##################################
-setwd("~/Ludwig_lab/scmtMMB/POLG_HEK/code/")
+setwd("~/Ludwig_lab/scmtMMB/POLG_HEK/deep_seq/")
 library(data.table)
 library(dplyr)
 library(BuenColors)
@@ -9,21 +9,21 @@ library(ggh4x)
 '%ni%' <- Negate('%in%')
 source("../../global_func/variant_calling.R")
 
-mitoSE.CTRL <- readRDS("../POLG_HEK_large_data_files/output/2_mgatk.CTRL.rds")
-mitoSE.KI36 <- readRDS("../POLG_HEK_large_data_files/output/2_mgatk.KI36.rds")
-mitoSE.KIA2 <- readRDS("../POLG_HEK_large_data_files/output/2_mgatk.KIA2.rds")
+mitoSE.CTRL <- readRDS("output/2_mgatk.CTRL.rds")
+mitoSE.KI36 <- readRDS("output/2_mgatk.KI36.rds")
+mitoSE.KIA2 <- readRDS("output/2_mgatk.KIA2.rds")
 
 mmat.CTRL <- call_mutations_mgatk(mitoSE.CTRL)
 mmat.KI36 <- call_mutations_mgatk(mitoSE.KI36)
 mmat.KIA2 <- call_mutations_mgatk(mitoSE.KIA2)
 
 # filter low confident variant
-mtMut <- function(mmat, str_low, str_high, n_cells = 1, vmr.thres = 0.01){
+mtMut <- function(mmat, str_low, str_high, n_cells = 1, vmr.thres = 0.003){
   var <- as.data.frame(rowData(mmat))
   var <- var %>% subset(n_cells_conf_detected >= n_cells &
                           strand_correlation > str_low &
                           strand_correlation <= str_high &
-                          vmr >= vmr.thres &
+                          vmr >= vmr.thres & mean < 0.9 &
                           variant %ni% c("301A>C", "302A>C", "310T>C", "316G>C")) %>% pull(variant)
   mmat <- mmat[var,]
   return(mmat)
@@ -127,9 +127,6 @@ prop_df$change_plot <- paste0(prop_df$group_change, "_", prop_df$three_plot)
 
 prop_df$group_change_plot <- gsub('^([A-Z]{1})([A-Z]+)$', '\\1>\\2', prop_df$group_change)
 
-#write.table(refallele_long, "../output/3_mutational_signature_refallele_long.csv")
-#write.table(prop_df, "../output/3_mutational_signature_prop_df.csv")
-
 # Visualize
 
 KI36.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KI36.m, ylim(0,8))) +
@@ -139,13 +136,13 @@ KI36.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KI36.m, 
         axis.ticks.x=element_blank())+
   scale_fill_manual(values= c("firebrick", "dodgerblue3")) +
   theme(legend.position = "bottom") +
-  scale_y_continuous(expand = c(0,0), limits = c(0,7)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0,4.5)) +
   geom_hline(yintercept = 1, linetype =2, color = "black") +
   labs(x = "Change in nucleotide", y = "Substitution Rate (Observed/Expected)") +
   facet_nested(~group_change_plot, scales="free_x", space="free") +
   ggtitle("Mutational Signature KI36 with str-cor 0.45-0.65")#, subtitle = "Cosine Similarity (KI36.h) = 0.829")
-
-ggsave(plot = KI36.plot, width = 4, height = 2.5, filename = "../plot/31_Mutational_Signature_KI36_lcv_45_65.pdf")
+KI36.plot
+ggsave(plot = KI36.plot, width = 4, height = 2.5, filename = "../plot/Ext_Fig1f_31_Mutational_Signature_KI36_lcv_45_65.pdf")
 
 KIA2.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KIA2.m, ylim(0,8))) +
   geom_bar(stat = "identity", position = "dodge") + pretty_plot() + L_border() + 
@@ -154,13 +151,13 @@ KIA2.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KIA2.m, 
         axis.ticks.x=element_blank())+
   scale_fill_manual(values= c("firebrick", "dodgerblue3")) +
   theme(legend.position = "bottom") +
-  scale_y_continuous(expand = c(0,0), limits = c(0,7)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0,4.5)) +
   geom_hline(yintercept = 1, linetype =2, color = "black") +
   labs(x = "Change in nucleotide", y = "Substitution Rate (Observed/Expected)") +
   facet_nested(~group_change_plot, scales="free_x", space="free") +
   ggtitle("Mutational Signature KIA2 with str-cor 0.45-0.65")#, subtitle = "Cosine Similarity (KIA2.h) = 0.953")
-
-ggsave(plot = KIA2.plot, width = 4, height = 2.5, filename = "../plot/31_Mutational_Signature_KIA2_lcv_45_65.pdf")
+KIA2.plot
+ggsave(plot = KIA2.plot, width = 4, height = 2.5, filename = "../plot/Ext_Fig1f_31_Mutational_Signature_KIA2_lcv_45_65.pdf")
 
 
 KI36.plot.n <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KI36.n, ylim(0,8))) +
@@ -170,13 +167,13 @@ KI36.plot.n <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KI36.n
         axis.ticks.x=element_blank())+
   scale_fill_manual(values= c("firebrick", "dodgerblue3")) +
   theme(legend.position = "bottom") +
-  scale_y_continuous(expand = c(0,0), limits = c(0,7)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0,5)) +
   geom_hline(yintercept = 1, linetype =2, color = "black") +
   labs(x = "Change in nucleotide", y = "Substitution Rate (Observed/Expected)") +
   facet_nested(~group_change_plot, scales="free_x", space="free") +
   ggtitle("Mutational Signature KI36 with str-cor <0")#, subtitle = "Cosine Similarity (KI36.h) = 0.829")
-
-ggsave(plot = KI36.plot.n, width = 4, height = 2.5, filename = "../plot/31_Mutational_Signature_KI36_lcv_neg.pdf")
+KI36.plot.n
+ggsave(plot = KI36.plot.n, width = 4, height = 2.5, filename = "../plot/Ext_Fig1f_31_Mutational_Signature_KI36_lcv_neg.pdf")
 
 KIA2.plot.n <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KIA2.n, ylim(0,8))) +
   geom_bar(stat = "identity", position = "dodge") + pretty_plot() + L_border() + 
@@ -185,17 +182,17 @@ KIA2.plot.n <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KIA2.n
         axis.ticks.x=element_blank())+
   scale_fill_manual(values= c("firebrick", "dodgerblue3")) +
   theme(legend.position = "bottom") +
-  scale_y_continuous(expand = c(0,0), limits = c(0,7)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0,6)) +
   geom_hline(yintercept = 1, linetype =2, color = "black") +
   labs(x = "Change in nucleotide", y = "Substitution Rate (Observed/Expected)") +
   facet_nested(~group_change_plot, scales="free_x", space="free") +
   ggtitle("Mutational Signature KIA2 with str-cor <0")#, subtitle = "Cosine Similarity (KIA2.h) = 0.953")
-
-ggsave(plot = KIA2.plot.n, width = 4, height = 2.5, filename = "../plot/31_Mutational_Signature_KIA2_lcv_neg.pdf")
+KIA2.plot.n
+ggsave(plot = KIA2.plot.n, width = 4, height = 2.5, filename = "../plot/Ext_Fig1f_31_Mutational_Signature_KIA2_lcv_neg.pdf")
 
 
 # Cosine similarity
-lsa::cosine(prop_df$observed_prop_KI36.h, prop_df$observed_prop_KI36.m) # 0.9667426
-lsa::cosine(prop_df$observed_prop_KI36.h, prop_df$observed_prop_KI36.n) # 0.1910642
-lsa::cosine(prop_df$observed_prop_KIA2.h, prop_df$observed_prop_KIA2.m) # 0.9551243
-lsa::cosine(prop_df$observed_prop_KIA2.h, prop_df$observed_prop_KIA2.n) # 0.5564896
+lsa::cosine(prop_df$observed_prop_KI36.h, prop_df$observed_prop_KI36.m) # 0.63
+lsa::cosine(prop_df$observed_prop_KI36.h, prop_df$observed_prop_KI36.n) # 0.25
+lsa::cosine(prop_df$observed_prop_KIA2.h, prop_df$observed_prop_KIA2.m) # 0.94
+lsa::cosine(prop_df$observed_prop_KIA2.h, prop_df$observed_prop_KIA2.n) # 0.49

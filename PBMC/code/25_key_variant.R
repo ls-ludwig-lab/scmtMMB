@@ -47,7 +47,7 @@ p1 <- as.data.frame(rowData(H5_mmat_ND4L)) %>% arrange(desc(mean)) %>%
   geom_text_repel(aes(label = variant)) +
   ggtitle("Mean VAF of MT-ND4L variants in H05") #10599G>A
 p1
-ggsave(plot = p1, paste0("../plot/25_H05_ND4L.pdf"), width = 2, height = 2)
+ggsave(plot = p1, paste0("../plot/Fig7d_25_H05_ND4L.pdf"), width = 2, height = 2)
 
 df_H05 <- scmtMMB %>% filter(sample == "H05" & symbol == "Total") %>% 
   mutate(VAF = assay(H5_mmat)["10599G>A",.$barcode]) %>% arrange(VAF)
@@ -58,7 +58,7 @@ p2 <- df_H05 %>%
   theme_classic() + theme_void() + Seurat::NoLegend()
 p2
 
-ggsave(plot = p2, paste0("../plot/25_H05_ND4L_G10559A.pdf"), width = 2, height = 2)
+ggsave(plot = p2, paste0("../plot/Fig7e_25_H05_ND4L_G10559A.pdf"), width = 2, height = 2)
 
 # density plot
 df_H05$af_weight <- Nebulosa:::calculate_density(df_H05$VAF, cbind(df_H05$refUMAP_1, df_H05$refUMAP_2),
@@ -71,9 +71,9 @@ p2.2 <- ggplot(df_H05 %>% arrange(af_weight),
 p2.2.nl <- p2.2 + theme(legend.position = "none")
 p2.2.leg <- ggpubr::get_legend(p2.2) %>% ggpubr::as_ggplot()
 
-ggsave(plot = p2.2.leg, paste0("../plot/25_density.leg.pdf"), width = 3, height = 2)
+ggsave(plot = p2.2.leg, paste0("../plot/Fig7e_25_density.leg.pdf"), width = 3, height = 2)
 
-ggsave(plot = p2.2.nl, paste0("../plot/25_H05_ND4L_G10559A_smooth_umap.pdf"), width = 2, height = 2)
+ggsave(plot = p2.2.nl, paste0("../plot/Fig7e_25_H05_ND4L_G10559A_smooth_umap.pdf"), width = 2, height = 2)
 
 ##########  M60  ###############
 
@@ -88,7 +88,7 @@ p3 <-as.data.frame(rowData(M60_mmat_ND3)) %>% arrange(desc(mean)) %>%
   geom_text_repel(aes(label = variant)) +
   ggtitle("Mean VAF of MT-ND3 variants in M60") #10270T>C 
 p3
-ggsave(plot = p3, paste0("../plot/25_M60_ND3.pdf"), width = 2, height = 2)
+ggsave(plot = p3, paste0("../plot/Fig7d_25_M60_ND3.pdf"), width = 2, height = 2)
 
 df_M60 <- scmtMMB %>% filter(sample == "M60" & symbol == "Total") %>% 
   mutate(VAF = assay(M60_mmat_ND3)["10270T>C",.$barcode]) %>% arrange(VAF)
@@ -98,7 +98,7 @@ p4 <- df_M60 %>%
   geom_point(size = 0.01) + scale_color_viridis(begin = 0, end = 1)+
   theme_classic()+ theme_void() + Seurat::NoLegend()
 p4
-ggsave(plot = p4, paste0("../plot/25_M60_ND3_T10270C.pdf"), width = 2, height = 2)
+ggsave(plot = p4, paste0("../plot/Fig7e_25_M60_ND3_T10270C.pdf"), width = 2, height = 2)
 
 # density plot
 df_M60$af_weight <- Nebulosa:::calculate_density(df_M60$VAF, cbind(df_M60$refUMAP_1, df_M60$refUMAP_2),
@@ -109,7 +109,7 @@ p2.2 <- ggplot(df_M60 %>% arrange(af_weight),
   scale_color_gradientn(colors = BuenColors::jdb_palette("flame_flame")) + theme_void() +
   theme(legend.position = "none")
 p2.2
-ggsave(plot = p2.2, paste0("../plot/25_M60_ND3_T10270C_smooth_umap.pdf"), width = 2, height = 2)
+ggsave(plot = p2.2, paste0("../plot/Fig7e_25_M60_ND3_T10270C_smooth_umap.pdf"), width = 2, height = 2)
 
 
 ##########  M80  ###############
@@ -123,7 +123,7 @@ p5 <-  as.data.frame(rowData(M80_mmat_ND3)) %>% arrange(desc(mean)) %>%
   theme_classic() +
   ggtitle("Mean VAF of MT-ND3 variants in M80") # 10398A>G
 p5 
-ggsave(plot = p5 , paste0("../plot/25_M80_ND3.pdf"), width = 2, height = 2)
+ggsave(plot = p5 , paste0("../plot/Fig7d_25_M80_ND3.pdf"), width = 2, height = 2)
 
 df_M80 <- scmtMMB %>% filter(sample == "M80" & symbol == "Total") %>% 
   mutate(VAF = assay(M80_mmat_ND3)["10398A>G",.$barcode]) %>% arrange(VAF)
@@ -133,7 +133,7 @@ p6 <- df_M80 %>%
   geom_point(size = 0.01) + scale_color_viridis(begin = 0, end = 1)+
   theme_classic() + theme_void() + Seurat::NoLegend()
 p6
-ggsave(plot = p6, paste0("../plot/25_M80_ND3_A10398G.pdf"), width = 2, height = 2)
+ggsave(plot = p6, paste0("../plot/Fig7e_25_M80_ND3_A10398G.pdf"), width = 2, height = 2)
 
 # density plot
 df_M80$af_weight <- Nebulosa:::calculate_density(df_M80$VAF, cbind(df_M80$refUMAP_1, df_M80$refUMAP_2),
@@ -144,7 +144,7 @@ p2.2 <- ggplot(df_M80 %>% arrange(af_weight),
   scale_color_gradientn(colors = BuenColors::jdb_palette("flame_flame")) + theme_void() +
   theme(legend.position = "none")
 p2.2
-ggsave(plot = p2.2, paste0("../plot/25_M80_ND3_A10398G_smooth_umap.pdf"), width = 2, height = 2)
+ggsave(plot = p2.2, paste0("../plot/Fig7e_25_M80_ND3_A10398G_smooth_umap.pdf"), width = 2, height = 2)
 
 
 scmtMMB %>% filter(sample == "M80" & symbol == "MT_ND3") %>% 
@@ -163,37 +163,37 @@ scmtMMB_ex %>% filter(sample == "M80" & symbol == "MT_ND3") %>%
 
 
 ######################
-
-pos_RNR2 <- 1671:3229
-idx <- rowData(M80_mmat)$position %in% pos_RNR2
-M80_mmat_RNR2 <- M80_mmat[idx,]
-p7 <- as.data.frame(rowData(M80_mmat_RNR2)) %>% arrange(desc(mean)) %>% 
-  mutate(rank = 1:nrow(.)) %>% ggplot(aes(x = rank, y = mean)) + geom_point(size = 0.5) + theme_classic() +
-  geom_text_repel(aes(label = variant)) +
-  ggtitle("Mean VAF of MT-RNR2 variants in M80") #1969G>A, 3079G>A #2702G>A
-p7
-ggsave(plot = p7, paste0("../plot/25_M80_RNR2.pdf"), width = 2, height = 2)
-
-p8.1 <- scmtMMB %>% filter(sample == "M80" & symbol == "Total") %>% 
-  mutate(VAF = assay(M80_mmat_RNR2)["1969G>A",.$barcode]) %>% arrange(VAF) %>% 
-  ggplot(aes(x=refUMAP_1, y = refUMAP_2, col = VAF)) +
-  geom_point(size = 0.01) + scale_color_viridis(begin = 0, end = 1)+
-  theme_classic()+ theme_void() + Seurat::NoLegend()
-p8.1
-ggsave(plot = p8.1, paste0("../plot/25_M80_RNR2_G1969A.pdf"), width = 2, height = 2)
-
-p8.2 <- scmtMMB %>% filter(sample == "M80" & symbol == "Total") %>% 
-  mutate(VAF = assay(M80_mmat_RNR2)["3079G>A",.$barcode]) %>% arrange(VAF) %>% 
-  ggplot(aes(x=refUMAP_1, y = refUMAP_2, col = VAF)) +
-  geom_point(size = 0.01) + scale_color_viridis(begin = 0, end = 1)+
-  theme_classic()+ theme_void() + Seurat::NoLegend()
-p8.2
-ggsave(plot = p8.2, paste0("../plot/25_M80_RNR2_G3079A.pdf"), width = 2, height = 2)
-
-p8.3 <- scmtMMB %>% filter(sample == "M80" & symbol == "Total") %>% 
-  mutate(VAF = assay(M80_mmat_RNR2)["2702G>A",.$barcode]) %>% arrange(VAF) %>% 
-  ggplot(aes(x=refUMAP_1, y = refUMAP_2, col = VAF)) +
-  geom_point(size = 0.01) + scale_color_viridis(begin = 0, end = 1)+
-  theme_classic()+ theme_void() + Seurat::NoLegend()
-p8.3
-ggsave(plot = p8.3, paste0("../plot/3_M80_RNR2_G2702A.pdf"), width = 2, height = 2)
+# 
+# pos_RNR2 <- 1671:3229
+# idx <- rowData(M80_mmat)$position %in% pos_RNR2
+# M80_mmat_RNR2 <- M80_mmat[idx,]
+# p7 <- as.data.frame(rowData(M80_mmat_RNR2)) %>% arrange(desc(mean)) %>% 
+#   mutate(rank = 1:nrow(.)) %>% ggplot(aes(x = rank, y = mean)) + geom_point(size = 0.5) + theme_classic() +
+#   geom_text_repel(aes(label = variant)) +
+#   ggtitle("Mean VAF of MT-RNR2 variants in M80") #1969G>A, 3079G>A #2702G>A
+# p7
+# ggsave(plot = p7, paste0("../plot/25_M80_RNR2.pdf"), width = 2, height = 2)
+# 
+# p8.1 <- scmtMMB %>% filter(sample == "M80" & symbol == "Total") %>% 
+#   mutate(VAF = assay(M80_mmat_RNR2)["1969G>A",.$barcode]) %>% arrange(VAF) %>% 
+#   ggplot(aes(x=refUMAP_1, y = refUMAP_2, col = VAF)) +
+#   geom_point(size = 0.01) + scale_color_viridis(begin = 0, end = 1)+
+#   theme_classic()+ theme_void() + Seurat::NoLegend()
+# p8.1
+# ggsave(plot = p8.1, paste0("../plot/25_M80_RNR2_G1969A.pdf"), width = 2, height = 2)
+# 
+# p8.2 <- scmtMMB %>% filter(sample == "M80" & symbol == "Total") %>% 
+#   mutate(VAF = assay(M80_mmat_RNR2)["3079G>A",.$barcode]) %>% arrange(VAF) %>% 
+#   ggplot(aes(x=refUMAP_1, y = refUMAP_2, col = VAF)) +
+#   geom_point(size = 0.01) + scale_color_viridis(begin = 0, end = 1)+
+#   theme_classic()+ theme_void() + Seurat::NoLegend()
+# p8.2
+# ggsave(plot = p8.2, paste0("../plot/25_M80_RNR2_G3079A.pdf"), width = 2, height = 2)
+# 
+# p8.3 <- scmtMMB %>% filter(sample == "M80" & symbol == "Total") %>% 
+#   mutate(VAF = assay(M80_mmat_RNR2)["2702G>A",.$barcode]) %>% arrange(VAF) %>% 
+#   ggplot(aes(x=refUMAP_1, y = refUMAP_2, col = VAF)) +
+#   geom_point(size = 0.01) + scale_color_viridis(begin = 0, end = 1)+
+#   theme_classic()+ theme_void() + Seurat::NoLegend()
+# p8.3
+# ggsave(plot = p8.3, paste0("../plot/3_M80_RNR2_G2702A.pdf"), width = 2, height = 2)

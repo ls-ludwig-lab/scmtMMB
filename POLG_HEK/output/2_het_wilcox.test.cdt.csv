@@ -1,8 +1,8 @@
 ,occurrence,.y.,group1,group2,n1,n2,statistic,p,p.adj,p.adj.signif
-1,Parental,mean,CTRL,KI36,388,161,9929.5,2.38e-36,1.19e-35,****
-2,Parental,mean,CTRL,KIA2,388,336,11336,4.77e-82,3.339e-81,****
-3,Parental,mean,KI36,KIA2,161,336,24658,0.111,0.111,ns
-4,POLG-shared,mean,KI36,KIA2,746,746,256764.5,0.01,0.02,*
-5,de-novo,mean,CTRL,KI36,67,1576,38831,0.000241,0.000723,***
-6,de-novo,mean,CTRL,KIA2,67,3569,50943.5,7.62e-16,3.048e-15,****
-7,de-novo,mean,KI36,KIA2,1576,3569,2053409,7.15e-54,4.29e-53,****
+1,Parental,mean,CTRL,KI36,593,407,75675,1.14e-23,2.66e-23,****
+2,Parental,mean,CTRL,KIA2,593,586,62233.5,3.93e-81,2.751e-80,****
+3,Parental,mean,KI36,KIA2,407,586,72491,6.98e-26,2.443e-25,****
+4,POLG-shared,mean,KI36,KIA2,5123,5123,12053672,9.33e-13,1.3062e-12,****
+5,Line-specific,mean,CTRL,KI36,27,4125,30945,6.74e-05,7.86333333333333e-05,****
+6,Line-specific,mean,CTRL,KIA2,27,5698,49098.5,0.001,0.001,***
+7,Line-specific,mean,KI36,KIA2,4125,5698,12916038,4.84e-17,8.47e-17,****

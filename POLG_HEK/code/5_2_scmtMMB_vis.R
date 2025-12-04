@@ -1,4 +1,4 @@
-setwd("~/Ludwig_lab/scmtMMB/POLG_HEK/code/")
+setwd("~/Ludwig_lab/scmtMMB/POLG_HEK/deep_seq/")
 source("../../global_func/quantifyMMB.R")
 library(Matrix)
 library(dplyr)
@@ -30,9 +30,9 @@ p2 <- scmtMMB_HEK_com %>%
   theme(aspect.ratio=1/1, axis.title.x=element_blank(), 
         axis.text.x=element_blank(), axis.ticks.x=element_blank()) +
   labs(y = bquote(paste(log[2], "(scwMSS + 0.01)")))
+p2
 
-
-ggsave(plot = p2, "../plot/52_MSS_weighted_complex.pdf", width = 14, height = 2.5)
+ggsave(plot = p2, "../plot/Ext_Fig5_52_MSS_weighted_complex.pdf", width = 14, height = 2.5)
 
 
 p3 <- scmtMMB_HEK_com %>%
@@ -49,6 +49,8 @@ p3 <- scmtMMB_HEK_com %>%
   theme(aspect.ratio=1/1, axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()) +
   labs(y = bquote(paste(log[10], "(scmtMPM + 1)")))
 
+ggsave(plot = p3, "../plot/Ext_Fig5_53_MPM_complex.pdf", width = 14, height = 2.5)
+
 # check if the elevated CI/CIV MMB cells in CTRL are the same ones
 scmtMMB_HEK_com %>% filter(sample == "CTRL" & symbol %in% c("CI","CIV")) %>% 
   select(barcode, symbol, mutation_per_MB) %>% 
@@ -58,25 +60,25 @@ scmtMMB_HEK_com %>% filter(sample == "CTRL" & symbol %in% c("CI","CIV")) %>%
 
 p4 <- scmtMMB_HEK %>% filter(symbol == "Total") %>% 
   ggplot(aes(x = log10(mtDNA_depth), y = mutation_per_MB + 1)) +
-  geom_point(aes(col = sample)) + facet_wrap(~sample) + 
+  geom_point(aes(col = sample), size = 0.01) + facet_wrap(~sample) + 
   scale_color_manual(values = color_vec) + 
   theme_bw() + ylab("Mutation per MB (Total)") + theme(legend.position="none") +
-  geom_smooth(method = "lm"))
-ggsave(plot = p4, paste0("../plot/54_CorDepth_MpMB.pdf")
+  geom_smooth(method = "lm")
+ggsave(plot = p4, "../plot/Ext_Fig5_54_CorDepth_MpMB.pdf", width = 7, height = 2.5)
 
 p5 <- scmtMMB_HEK %>% filter(symbol == "Total") %>% ggplot(aes(x = log10(mtDNA_depth), y = MSS_weighted, col = sample)) +
-      geom_point() + facet_wrap(~sample) + scale_color_manual(values = color_vec) + 
+      geom_point(size = 0.01) + facet_wrap(~sample) + scale_color_manual(values = color_vec) + 
       theme_bw() + ylab("Weighted MSS (Total)") + theme(legend.position="none") +
       geom_smooth(method = "lm")
-ggsave(plot = p5, paste0("../plot/55_CorDepth_MSSw.pdf"))
+ggsave(plot = p5, paste0("../plot/Ext_Fig5_55_CorDepth_MSSw.pdf"), width = 7, height = 2.5)
 
-(p6 <- scmtMMB_HEK %>% filter(symbol == "Total") %>% 
+p6 <- scmtMMB_HEK %>% filter(symbol == "Total") %>% 
     ggplot(aes(x= mutation_per_MB +1, y = MSS_weighted, color = sample)) +
     geom_point(size = 0.01) + scale_color_manual(values = color_vec) +
     facet_wrap(~sample, scales = "free", ncol = 3) + 
     theme_bw() + theme(legend.position="none") +
-    geom_smooth(method = "lm")) 
-ggsave(plot = p6, paste0("../plot/56_Cor_MpMB_MSSw.pdf"))
+    geom_smooth(method = "lm")
+ggsave(plot = p6, paste0("../plot/Ext_Fig5_56_Cor_MpMB_MSSw.pdf"), width = 7, height = 2.5)
 
 library(purrr)
 scmtMMB_HEK %>% filter(symbol == "Total") %>% 
@@ -94,12 +96,13 @@ scmtMMB_HEK %>% filter(symbol == "Total") %>%
     rs.MMB = map_dbl(data, ~ cor(.x$MSS_weighted, .x$mutation_per_MB, method = "spearman", use = "complete.obs"))
   ) %>% 
   ungroup()
+
 # # A tibble: 3 × 8
-#   sample data                  rp.MPM rs.MPM rp.MSS rs.MSS rp.MMB rs.MMB
-#   <chr>  <list>                 <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl>
-# 1 CTRL   <tibble [1,245 × 14]> 0.0595 0.113  0.0701 0.135   0.829  0.930
-# 2 KI36   <tibble [1,618 × 14]> 0.0626 0.0812 0.0693 0.0833  0.979  0.966
-# 3 KIA2   <tibble [1,895 × 14]> 0.0310 0.0324 0.0261 0.0231  0.928  0.917
+# sample data                   rp.MPM  rs.MPM  rp.MSS  rs.MSS rp.MMB rs.MMB
+# <chr>  <list>                  <dbl>   <dbl>   <dbl>   <dbl>  <dbl>  <dbl>
+# 1 CTRL   <tibble [1,225 × 14]>  0.0156  0.165   0.0435  0.192   0.810  0.988
+# 2 KI36   <tibble [1,040 × 14]>  0.169   0.178   0.179   0.189   0.901  0.852
+# 3 KIA2   <tibble [1,070 × 14]> -0.0400 -0.0564 -0.0281 -0.0434  0.963  0.957
 
 
 ## plot MMB on UMAP
@@ -118,16 +121,16 @@ lapply(c("CI", "CIII", "CIV", "CV", "tRNA", "rRNA", "Total"), function(cat){
     theme(aspect.ratio=1) + theme_classic() + ggtitle(paste0("MpMB_", cat)) 
   p.nl <- p + theme_void() + Seurat::NoLegend() 
   p.leg <- ggpubr::get_legend(p) %>% ggpubr::as_ggplot()
-  ggsave(plot = p.nl, paste0("../plot/5_MpMB_UMAP/MpMB_", cat,".pdf"), width = 2, height = 2)
-  ggsave(plot = p.leg, paste0("../plot/5_MpMB_UMAP/MpMB_", cat,".leg.pdf"), width = 3, height = 2)
+  ggsave(plot = p.nl, paste0("../plot/Fig4_5_MpMB_UMAP/MpMB_", cat,".pdf"), width = 2, height = 2)
+  ggsave(plot = p.leg, paste0("../plot/Fig4_5_MpMB_UMAP/MpMB_", cat,".leg.pdf"), width = 3, height = 2)
   
   p <- ggplot(df, aes(x = atacUMAP_1, y = atacUMAP_2, color = log2_MSSw)) +
     geom_point(size = 0.01) + scale_colour_viridis_c() +
     theme(aspect.ratio=1) + theme_classic() + ggtitle(paste0("MSS_weighted_", cat))
   p.nl <- p + theme_void() + Seurat::NoLegend() 
   p.leg <- ggpubr::get_legend(p) %>% ggpubr::as_ggplot()
-  ggsave(plot = p.nl, paste0("../plot/5_MSSw_UMAP/MSSw_", cat,".pdf"), width = 2, height = 2)
-  ggsave(plot = p.leg, paste0("../plot/5_MSSw_UMAP/MSSw_", cat,".leg.pdf"), width = 3, height = 2)
+  ggsave(plot = p.nl, paste0("../plot/Fig4_5_MSSw_UMAP/MSSw_", cat,".pdf"), width = 2, height = 2)
+  ggsave(plot = p.leg, paste0("../plot/Fig4_5_MSSw_UMAP/MSSw_", cat,".leg.pdf"), width = 3, height = 2)
   
 })
 
@@ -146,16 +149,16 @@ lapply(unique(scmtMMB_HEK$symbol), function(cat){
     theme(aspect.ratio=1) + theme_classic() + ggtitle(paste0("MpMB_", cat)) 
   p.nl <- p + theme_void() + Seurat::NoLegend() 
   p.leg <- ggpubr::get_legend(p) %>% ggpubr::as_ggplot()
-  ggsave(plot = p.nl, paste0("../plot/5a_MpMB_UMAP/MpMB_", cat,".pdf"), width = 2, height = 2)
-  ggsave(plot = p.leg, paste0("../plot/5a_MpMB_UMAP/MpMB_", cat,".leg.pdf"), width = 3, height = 2)
+  ggsave(plot = p.nl, paste0("../plot/Fig4_5a_MpMB_UMAP/MpMB_", cat,".pdf"), width = 2, height = 2)
+  ggsave(plot = p.leg, paste0("../plot/Fig4_5a_MpMB_UMAP/MpMB_", cat,".leg.pdf"), width = 3, height = 2)
   
   p <- ggplot(df, aes(x = atacUMAP_1, y = atacUMAP_2, color = log2_MSSw)) +
     geom_point(size = 0.01) + scale_colour_viridis_c() +
     theme(aspect.ratio=1) + theme_classic() + ggtitle(paste0("MSS_weighted_", cat))
   p.nl <- p + theme_void() + Seurat::NoLegend() 
   p.leg <- ggpubr::get_legend(p) %>% ggpubr::as_ggplot()
-  ggsave(plot = p.nl, paste0("../plot/5a_MSSw_UMAP/MSSw_", cat,".pdf"), width = 2, height = 2)
-  ggsave(plot = p.leg, paste0("../plot/5a_MSSw_UMAP/MSSw_", cat,".leg.pdf"), width = 3, height = 2)
+  ggsave(plot = p.nl, paste0("../plot/Fig4_5a_MSSw_UMAP/MSSw_", cat,".pdf"), width = 2, height = 2)
+  ggsave(plot = p.leg, paste0("../plot/Fig4_5a_MSSw_UMAP/MSSw_", cat,".leg.pdf"), width = 3, height = 2)
   
 })
 
@@ -167,7 +170,7 @@ p7 <- scmtMMB_HEK %>% filter(symbol == "Total") %>% filter(complete.cases(.)) %>
   scale_color_manual(values = color_vec) + 
   theme_bw() + ylab("Mutation per MB (Total)") + theme(legend.position="none") +
   geom_smooth(method = "lm")
-ggsave(plot = p7, paste0("../plot/57_CorDepth_MpMB_cluster.pdf"), width=6, height=6)
+ggsave(plot = p7, paste0("plot/57_CorDepth_MpMB_cluster.pdf"), width=6, height=6)
 
 p7s <- ggscatter(
   scmtMMB_HEK_tl, x = "mtDNA_depth", y = "mutation_per_MB",
@@ -177,9 +180,9 @@ p7s <- ggscatter(
   stat_cor(
     aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~")), 
     label.y = 2750)
-ggsave(plot = p7s, paste0("../plot/57s_CorDepth_MpMB_cluster.pdf"), width=6, height=6)
+ggsave(plot = p7s, paste0("plot/57s_CorDepth_MpMB_cluster.pdf"), width=6, height=6)
 
-# correlation between complex
+# correlation between complex Ext_Fig6
 scmtMMB_HEK %>% dplyr::select(barcode, sample, symbol, mutation_per_MB) %>% 
   dplyr::filter(grepl("CI|CV|RNA", symbol)) %>% 
   mutate(mutation_per_MB = log10(mutation_per_MB + 1)) %>% 
@@ -205,7 +208,7 @@ scmtMMB_HEK %>% dplyr::select(barcode, sample, symbol, mutation_per_MB) %>%
   select(CI, CIII, CIV, CV, tRNA, rRNA) %>% 
   psych::pairs.panels(., digits = 3, pch = 21, bg="#2780FF", smooth = FALSE, ellipses = FALSE)
 
-# correlation between gene
+# correlation between gene (Ext_Fig6)
 
 df.list <- scmtMMB_HEK %>% select(barcode, sample, symbol, mutation_per_MB) %>% 
   dplyr::filter(!grepl("CI|CV|RNA|Total", symbol)) %>%

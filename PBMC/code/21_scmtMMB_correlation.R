@@ -17,13 +17,13 @@ scmtMMB_ex <- read.csv("../PBMC_large_data_files/output/2_scmtMMB_exclude_3243.c
 
 ## mtscMMB cor with depth: correlation plotting
 theme_cor <- theme(aspect.ratio=1/1, panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-corplot.MPM <- scmtMMB %>% dplyr::filter(symbol == "Total") %>%
+(corplot.MPM <- scmtMMB %>% dplyr::filter(symbol == "Total") %>%
   ggplot(aes(x = log10(mtDNA_depth), y = mutation_per_MB, col = sample)) +
   geom_point(size = 0.01) + facet_wrap(~sample, ncol = 6) + scale_color_manual(values = color_vec) +
   theme_bw() + ylab("Total scMPM") + theme(legend.position="none") +
-  geom_smooth(method = "lm") + theme_cor
+  geom_smooth(method = "lm") + theme_cor)
 
-ggsave(plot = corplot.MMB, "../plot/21_cor_depth_MPM.pdf", width=9, height=2)
+ggsave(plot = corplot.MMB, "../plot/Ext_Fig10_21_cor_depth_MPM.pdf", width=9, height=2)
 
 
 corplot.MSS <- scmtMMB_ex %>% dplyr::filter(symbol == "Total") %>%
@@ -31,14 +31,14 @@ corplot.MSS <- scmtMMB_ex %>% dplyr::filter(symbol == "Total") %>%
   geom_point(size = 0.01) + facet_wrap(~sample, ncol = 6) + scale_color_manual(values = color_vec) +
   theme_bw() + ylab("Total scwMSS") + theme(legend.position="none") +
   geom_smooth(method = "lm") + theme_cor
-ggsave(plot = corplot.MSS, "../plot/21_cor_depth_MSS.pdf", width=9, height=2)
+ggsave(plot = corplot.MSS, "../plot/Ext_Fig10_21_cor_depth_MSS.pdf", width=9, height=2)
 
 corplot.MMB <- scmtMMB_ex %>% dplyr::filter(symbol == "Total") %>%
   ggplot(aes(x = mutation_per_MB, y = MSS_weighted, col = sample)) +
   geom_point(size = 0.01) + facet_wrap(~sample, ncol = 6) + scale_color_manual(values = color_vec) +
   theme_bw() + ylab("Total scwMSS") + theme(legend.position="none") + xlab("Total scMPM") +
   geom_smooth(method = "lm") + theme_cor
-ggsave(plot = corplot.MMB, "../plot/21_cor_MPM_MSS.pdf", width=9, height=2)
+ggsave(plot = corplot.MMB, "../plot/Ext_Fig10_21_cor_MPM_MSS.pdf", width=9, height=2)
 
 ## mtscMMB cor with depth: linear regression
 
@@ -70,70 +70,13 @@ all_regress <- scmtMMB %>%
 # 5 H47    <tibble [6,204 × 16]>  0.0942   0.146   0.100   0.144   0.850  0.891
 # 6 H05    <tibble [15,662 × 16]> 0.0448   0.0611  0.0401  0.0733  0.845  0.882
 
-#use broom the extract the slope and rsq per group
-# glance <-all_regress %>% 
-#   mutate(tidy1 = map(mod1, broom::tidy), glance1 = map(mod1, broom::glance), augment1 = map(mod1, broom::augment),
-#          rsq.MPM = glance1 %>% map_dbl('r.squared'), pval.MPM = glance1 %>% map_dbl('p.value'), slope.MPM = tidy1 %>% map_dbl(function(x) x$estimate[2]),
-#          tidy2 = map(mod2, broom::tidy), glance2 = map(mod2, broom::glance), augment2 = map(mod2, broom::augment),
-#          rsq.MSS = glance2 %>% map_dbl('r.squared'), pval.MSS = glance2 %>% map_dbl('p.value'), slope.MSS = tidy2 %>% map_dbl(function(x) x$estimate[2]),                    
-#          tidy3 = map(mod3, broom::tidy), glance3 = map(mod3, broom::glance), augment3 = map(mod3, broom::augment),
-#          rsq.MMB = glance3 %>% map_dbl('r.squared'), pval.MMB = glance3 %>% map_dbl('p.value'), slope.MMB = tidy3 %>% map_dbl(function(x) x$estimate[2])) 
-# glance
 
-scmtMMB_ex %>% mutate(age = as.numeric(gsub("H|M", "", sample))) %>% filter(symbol == "Total") %>% 
-  ggplot(aes(x= age, y = mutation_per_MB)) +
-  geom_violin(aes(fill = sample), scale = "width") + scale_fill_manual(values = color_vec) + 
-  geom_point(data = . %>% dplyr::filter(symbol == "Total" & barcode == "pseudobulk"), shape = 23, size = 2, fill = "white") +
-  Seurat::NoLegend() + geom_smooth(method = "lm") + theme_bw() + 
-  theme(aspect.ratio=1/1, panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-
-model = lm(mutation_per_MB ~age, data = scmtMMB_ex %>% mutate(age = as.numeric(gsub("H|M", "", sample))) %>% filter(symbol == "Total"))
-mutate(tidy = map(mod, broom::tidy), glance = map(mod, broom::glance), augment1 = map(mod, broom::augment),
-       rsq.MPM = glance1 %>% map_dbl('r.squared'), pval.MPM = glance1 %>% map_dbl('p.value'), slope.MPM = tidy1 %>% map_dbl(function(x) x$estimate[2]))
-
-### age-dependent increase of MMB
-scmtMMB %>% mutate(age = as.numeric(gsub("H|M", "", sample))) %>% filter(symbol == "Total") %>% 
-  ggplot(aes(x= age, y = mutation_per_MB)) +
-  geom_violin(aes(fill = sample), scale = "width") + scale_fill_manual(values = color_vec) + 
-  geom_point(data = . %>% dplyr::filter(symbol == "Total" & barcode == "pseudobulk"), shape = 23, size = 1, fill = "white") +
-  Seurat::NoLegend() + geom_smooth(method = "lm") + theme_bw() + 
-  theme(aspect.ratio=1/1, panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + Seurat::NoLegend()
-
-scmtMMB_ex %>% mutate(age = as.numeric(gsub("H|M", "", sample))) %>% filter(symbol == "Total") %>% 
-  ggplot(aes(x= age, y = mutation_per_MB)) +
-  geom_violin(aes(fill = sample), scale = "width") + scale_fill_manual(values = color_vec) + 
-  geom_point(data = . %>% dplyr::filter(symbol == "Total" & barcode == "pseudobulk"), shape = 23, size = 1, fill = "white") +
-  Seurat::NoLegend() + geom_smooth(method = "lm") + theme_bw() + 
-  theme(aspect.ratio=1/1, panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  ylab("Total scMPM") + xlab("Age (Years)") + Seurat::NoLegend()
-
-model = lm(mutation_per_MB ~age, 
-           data = scmtMMB_ex %>% mutate(age = as.numeric(gsub("H|M", "", sample))) %>% filter(symbol == "Total"))
-# Coefficients:
-# (Intercept)          age  
-#     29.7594       0.7425  
-broom::glance(model)
-# r.squared adj.r.squared sigma statistic p.value    df   logLik     AIC     BIC  deviance df.residual  nobs
-#     <dbl>         <dbl> <dbl>     <dbl>   <dbl> <dbl>    <dbl>   <dbl>   <dbl>     <dbl>       <int> <int>
-#     0.253         0.253  32.4    15373.       0     1 -221869. 443743. 443770. 47580646.       45302 45304
-
+# Ext Fig 11c
 scmtMMB %>% filter(grepl(x = sample, "M")) %>% mutate(age = as.numeric(gsub("H|M", "", sample))) %>% 
   filter(symbol == "Total") %>% ggplot(aes(x = X3243A_G, colour = sample)) + 
   stat_ecdf() + scale_color_manual(values = color_vec) + theme_bw() +
-  theme(aspect.ratio=1/1, panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+  theme(aspect.ratio=1/1, panel.grid.major = element_blank(), panel.grid.minor = element_blank()) # Ext_Fig11c_2_3243_ecdf.pdf
 
-scmtMMB %>% filter(grepl(x = sample, "M")) %>% filter(symbol == "Total") %>% 
-  ggplot(aes(x= sample, y = X3243A_G)) + geom_jitter(color = "grey", size =0.01) +
-  geom_violin(aes(fill = sample), scale = "width") + 
-  scale_fill_manual(values = color_vec) + 
-  Seurat::NoLegend() + geom_smooth(method = "lm") + theme_bw() + 
-  theme(aspect.ratio=1/1, panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + Seurat::NoLegend()
-
-scmtMMB %>% filter(grepl(x = sample, "M")) %>% filter(symbol == "tRNA") %>% 
-  ggplot(aes(x= X3243A_G, y = mutation_per_MB, color = sample)) + geom_point() + geom_contour(aes(z = mtDNA_depth))+
-  scale_color_manual(values = color_vec) + 
-  Seurat::NoLegend() + geom_smooth(method = "lm", color = "black") + theme_bw() + facet_wrap(~sample) +
-  theme(aspect.ratio=1/1, panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + Seurat::NoLegend()
 
 ## mtscMMB cor with m.3242A>G
 theme_cor <- theme(aspect.ratio=1/1, panel.grid.major = element_blank(), panel.grid.minor = element_blank())
@@ -142,7 +85,7 @@ corplot.MPM_3243 <- scmtMMB %>% dplyr::filter(symbol == "Total") %>% filter(grep
   geom_point(size = 0.01) + facet_wrap(~sample, ncol = 4) + scale_color_manual(values = color_vec) +
   theme_bw() + ylab("Total scmtMPM")+ xlab("m.3243A>G heteroplasmy (%)") + theme(legend.position="none") +
   geom_smooth(method = "lm", color = "black") + theme_cor
-ggsave(plot = corplot.MPM_3243, "../plot/21_cor_3243_scmtMPM.pdf", width=4, height=2)
+ggsave(plot = corplot.MPM_3243, "../plot/Ext_Fig11e_21_cor_3243_scmtMPM.pdf", width=4, height=2)
 
 corplot.MPM_3243_density <- scmtMMB %>% dplyr::filter(symbol == "Total") %>% filter(sample %in% c("M29","M35")) %>% 
   ggplot(aes(x = X3243A_G * 100, y = mutation_per_MB, col = sample)) + 
@@ -153,7 +96,7 @@ corplot.MPM_3243_density <- scmtMMB %>% dplyr::filter(symbol == "Total") %>% fil
   theme_bw() + ylab("Total scmtMPM")+ xlab("m.3243A>G heteroplasmy (%)") + theme(legend.position="none") +
   theme_cor
 
-ggsave(plot = corplot.MPM_3243_density, "../plot/21_cor_3243_MPM_d.pdf", width=4, height=2)
+ggsave(plot = corplot.MPM_3243_density, "../plot/Fig6d_21_cor_3243_MPM_d.pdf", width=4, height=2)
 
 
 corplot.MPM_3243_density <- scmtMMB_ex %>% dplyr::filter(symbol == "Total") %>% filter(sample %in% c("M29","M35")) %>% 
@@ -165,7 +108,7 @@ corplot.MPM_3243_density <- scmtMMB_ex %>% dplyr::filter(symbol == "Total") %>% 
   theme_bw() + ylab("Total scmtMPM")+ xlab("m.3243A>G heteroplasmy (%)") + theme(legend.position="none") +
   theme_cor
 
-ggsave(plot = corplot.MPM_3243_density, "../plot/21_cor_ex3243_MPM_d.pdf", width=4, height=2)
+ggsave(plot = corplot.MPM_3243_density, "../plot/Fig6e_21_cor_ex3243_MPM_d.pdf", width=4, height=2)
 
 #scwMSS vs 3243 VAF
 corplot.MSS_3243_density <- scmtMMB %>% dplyr::filter(symbol == "Total") %>% filter(sample %in% c("M29","M35")) %>% 
@@ -178,27 +121,6 @@ corplot.MSS_3243_density <- scmtMMB %>% dplyr::filter(symbol == "Total") %>% fil
 
 ggsave(plot = corplot.MSS_3243_density, "../plot/21_cor_3243_MSS_d.pdf", width=4, height=2)
 
-
-corplot.depth_MPM <- scmtMMB %>% dplyr::filter(symbol == "Total") %>% 
-  filter(sample %in% c("M29","M35")) %>% filter(X3243A_G == 0) %>% 
-  ggplot(aes(x = mtDNA_depth, y = mutation_per_MB, col = sample)) + 
-  geom_point(color = "black", size = 0.01) +
-  # geom_density2d(bins = 100) + scale_x_continuous(limits = c(-18, 110), breaks = seq(0,100, 25))+
-  facet_wrap(~sample, ncol = 6) + scale_color_manual(values = color_vec) +
-  theme_bw() + ylab("scmtMPM")+ xlab("mtDNA depth") + theme(legend.position="none") +
-  theme_cor
-ggsave(plot = corplot.depth_MPM, "../plot/21_cor_MPM_depth_3243_0.pdf", width=4, height=2)
-
-
-scmtMMB %>% dplyr::filter(symbol == "Total") %>% 
-  filter(sample %in% c("M29","M35")) %>% filter(X3243A_G == 0) %>% 
-  ggplot(aes(x = mtDNA_depth, y = mutation_per_MB, col = sample)) + 
-  geom_point(color = "black", size = 0.01) +
-  # geom_density2d(bins = 100) + scale_x_continuous(limits = c(-18, 110), breaks = seq(0,100, 25))+
-  facet_wrap(~sample, ncol = 6) + scale_color_manual(values = color_vec) +
-  theme_bw() + ylab("scmtMPM")+ xlab("mtDNA depth") + theme(legend.position="none") +
-  theme_cor
-
 VAF_depth <- scmtMMB %>% dplyr::filter(symbol == "Total") %>% 
   filter(sample %in% c("M29","M35")) %>% # filter(X3243A_G == 0) %>% 
   ggplot(aes(x = X3243A_G, y = mtDNA_depth, col = sample)) + 
@@ -207,7 +129,7 @@ VAF_depth <- scmtMMB %>% dplyr::filter(symbol == "Total") %>%
   facet_wrap(~sample, ncol = 2) +  scale_color_manual(values = color_vec) +
   theme_bw() + ylab("mtDNA depth")+ xlab("m.3243A>G heteroplasmy (%)") + theme(legend.position="none") +
   theme_cor
-ggsave(plot = VAF_depth, "../plot/21_depth_3243.pdf", width=4, height=2)
+ggsave(plot = VAF_depth, "../plot/Fig6f_21_depth_3243.pdf", width=4, height=2)
 
 # tRNA score vs heteroplasmy (sanity check)
 corplot.tRNA_MPM_3243 <- scmtMMB %>% dplyr::filter(symbol == "tRNA" & sample %in% c("M29","M35", "M60","M80")) %>%
@@ -215,7 +137,7 @@ corplot.tRNA_MPM_3243 <- scmtMMB %>% dplyr::filter(symbol == "tRNA" & sample %in
   geom_point(size = 0.01) + facet_wrap(~sample, ncol = 4) + scale_color_manual(values = color_vec) +
   theme_bw() + ylab("tRNA scmtMPM")+ xlab("m.3243A>G heteroplasmy (%)") + theme(legend.position="none") +
   geom_smooth(method = "lm", color = "black") + theme_cor
-ggsave(plot = corplot.tRNA_MPM_3243, "../plot/21_cor_3243_tRNA_scmtMPM.pdf", width=4, height=2)
+ggsave(plot = corplot.tRNA_MPM_3243, "../plot/Ext_Fig11e_21_cor_3243_tRNA_scmtMPM.pdf", width=4, height=2)
 
 
 
@@ -269,14 +191,6 @@ tRNA_glance_3243
 # 3 M60    <lm>   <lm>   <tibble> <tibble> <tibble>   0.620        0      8.91 <tibble> <tibble> <tibble>   0.731        0
 # 4 M80    <lm>   <lm>   <tibble> <tibble> <tibble>   0.649        0      8.40 <tibble> <tibble> <tibble>   0.768        0
 
-
-corplot.MPMex_3243 <- scmtMMB_ex %>% dplyr::filter(symbol == "Total") %>%
-  ggplot(aes(x = X3243A_G * 100, y = mutation_per_MB, col = sample)) +
-  geom_point(size = 0.01) + facet_wrap(~sample, ncol = 6) + scale_color_manual(values = color_vec) +
-  theme_bw() + ylab("Total scMPM")+ xlab("m.3243A>G heteroplasmy (%)") + theme(legend.position="none") +
-  geom_smooth(method = "lm", color = "black") + theme_cor
-ggsave(plot = corplot.MPM_3243, "../plot/21_cor_3243_MPMex.pdf", width=10, height=2)
-
 all_regress_3243 <-  scmtMMB %>% dplyr::filter(symbol == "Total") %>% 
   mutate(X3243A_G = X3243A_G*100) %>% group_by(sample) %>%
   do(mod1 = lm(mutation_per_MB ~ X3243A_G, data = .),
@@ -302,34 +216,4 @@ glance_3243ex <-all_regress_3243ex %>%
          tidy2 = map(mod2, broom::tidy), glance2 = map(mod2, broom::glance), augment2 = map(mod2, broom::augment),
          rsq.MSS = glance2 %>% map_dbl('r.squared'), pval.MSS = glance2 %>% map_dbl('p.value'), slope.MSS = tidy2 %>% map_dbl(function(x) x$estimate[2])) 
 glance_3243ex
-
-
-
-scmtMMB %>% dplyr::filter(symbol == "Total") %>% 
-  filter(sample %in% c("M29","M35")) %>% filter(X3243A_G == 0) %>% 
-  ggplot(aes(x = predicted.celltype.l2, y = mtDNA_depth)) + 
-  geom_violin()+
-  facet_wrap(~sample, ncol = 2) +  scale_color_manual(values = color_vec) +
-  theme_bw() + ylab("mtDNA depth")+ xlab("m.3243A>G heteroplasmy (%)") + theme(legend.position="none") +
-  theme_cor
-
-
-scmtMMB %>% filter(barcode != "pseudobulk" & symbol == "Total") %>%
-  mutate(
-    celltype = case_when(
-      predicted.celltype.l2 %in% c("CD8 TEM", "CD8 TCM") ~ "CD8 Eff/Mem",
-      predicted.celltype.l2 %in% c("CD4 TEM", "CD4 TCM", "CD4 CTL") ~ "CD4 Eff/Mem",
-      predicted.celltype.l2 %in% c("B naive", "B intermediate", "B memory", "Plasmablast") ~ "B cell",
-      predicted.celltype.l2 %in% c("CD14 Mono", "CD16 Mono", "cDC1", "cDC2", "pDC") ~ "Monocyte/DC",
-      grepl("NK|ILC", predicted.celltype.l2) ~ "NK/ILC",
-      predicted.celltype.l2 %in% c("Doublet", "Eryth", "Platelet", "ASDC", NA) ~ "discard",
-      TRUE ~ predicted.celltype.l2
-    )
-  ) %>% filter(celltype != "discard") %>% 
-  dplyr::filter(symbol == "Total") %>% 
-  filter(sample %in% c("M29","M35")) %>% filter(X3243A_G == 0) %>% 
-  ggplot(aes(x = celltype, y = mtDNA_depth)) + 
-  geom_violin()+
-  geom_jitter(size = 0.1, color = "grey")+
-  facet_wrap(~sample, ncol = 2) + theme_classic()
 

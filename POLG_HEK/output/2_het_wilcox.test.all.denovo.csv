@@ -1,7 +1,7 @@
 ,occurrence,.y.,group1,group2,n1,n2,statistic,p,p.adj,p.adj.signif
-1,Parental,mean,CTRL,KI36,388,161,9929.5,2.38e-36,9.52e-36,****
-2,Parental,mean,CTRL,KIA2,388,336,11336,4.77e-82,2.862e-81,****
-3,Parental,mean,KI36,KIA2,161,336,24658,0.111,0.111,ns
-4,de novo,mean,CTRL,KI36,67,2322,49151,2.68e-07,5.36e-07,****
-5,de novo,mean,CTRL,KIA2,67,4315,58393,5.09e-17,1.527e-16,****
-6,de novo,mean,KI36,KIA2,2322,4315,4070919,1.86e-36,9.3e-36,****
+1,Non-parental,mean,CTRL,KI36,27,9248,56741.5,9.48e-07,2.844e-06,****
+2,Non-parental,mean,CTRL,KIA2,27,10821,72975,6.85e-06,1.37e-05,****
+3,Non-parental,mean,KI36,KIA2,9248,10821,51608284,0.000122,0.000122,***
+4,Parental,mean,CTRL,KI36,593,407,75675,1.14e-23,4.56e-23,****
+5,Parental,mean,CTRL,KIA2,593,586,62233.5,3.93e-81,2.358e-80,****
+6,Parental,mean,KI36,KIA2,407,586,72491,6.98e-26,3.49e-25,****

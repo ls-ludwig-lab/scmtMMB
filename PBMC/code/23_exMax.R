@@ -120,8 +120,8 @@ filtered_data <- rbind(
 P1 <- create_violin_plot(filtered_data, "mutation_per_MB", "Total scMPM", "pseudobulk", "../plot/22_scMPM_total_pm_MELAS_q5_q95.pdf")
 P1.nl <- P1 + Seurat::NoLegend()
 P1.leg <- ggpubr::get_legend(P1) %>% ggpubr::as_ggplot()
-ggsave(plot = P1.nl, "../plot/23_scMPM_total_pm_MELAS_q5_q95.pdf", width = 3, height = 3)
-ggsave(plot = P1.leg, "../plot/23_scMPM_total_pm_MELAS_leg_q5_q95.pdf", width = 3, height = 3)
+ggsave(plot = P1.nl, "../plot/Fig7a_23_scMPM_total_pm_max_q5_q95.pdf", width = 3, height = 3)
+ggsave(plot = P1.leg, "../plot/Fig7a_23_scMPM_total_pm_max_leg_q5_q95.pdf", width = 3, height = 3)
 
 
 df_wide <- filtered_data %>% filter(symbol == "Total") %>% 
@@ -141,7 +141,7 @@ results <- df_wide %>%
 P2 <- create_violin_plot(filtered_data, "MSS_weighted", "Total scwMSS", "pseudobulk", "../plot/22_scwMSS_total_pm_MELAS_q5_q95.pdf")
 P2.nl <- P2 + Seurat::NoLegend()
 P2.leg <- ggpubr::get_legend(P2) %>% ggpubr::as_ggplot()
-ggsave(plot = P2.nl, "../plot/23_scwMSS_total_pm_MELAS_q5_q95.pdf", width = 3, height = 3)
+ggsave(plot = P2.nl, "../plot/Fig7a_23_scwMSS_total_pm_max_q5_q95.pdf", width = 3, height = 3)
 
 
 theme_1_nogrid <- theme(aspect.ratio=1/1, axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), 

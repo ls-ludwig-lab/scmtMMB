@@ -1,0 +1,15 @@
+for FILTER in CTRL_CB.txt KIA2_CB.txt KI36_CB.txt
+do
+    PREFIX=$(basename "$FILTER" _CB.txt)
+    echo "Processing $PREFIX ..."
+    # ... your filtering steps ...
+    COUNT=$(samtools view -c "${PREFIX}_filtered.bam")
+    echo "$PREFIX has $COUNT reads"
+done
+
+Processing CTRL ...
+CTRL has 42701668 reads
+Processing KIA2 ...
+KIA2 has 258414081 reads
+Processing KI36 ...
+KI36 has 135496613 reads

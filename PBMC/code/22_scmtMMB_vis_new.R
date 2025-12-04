@@ -51,27 +51,27 @@ P1 <- generate_plot(
   combined_data,
   metric = mutation_per_MB,
   y_label = "Total scmtMPM",
-  file_prefix = "../plot/22_scMPM_total_pm_MELAS"
+  file_prefix = "../plot/Fig6b_22_scmtMPM_total_pm_MELAS"
 )
 P1.nl <- P1 + Seurat::NoLegend()
 P1.leg <- ggpubr::get_legend(P1) %>% ggpubr::as_ggplot()
 
 # Save P1 plots
-ggsave(plot = P1.nl, filename = "../plot/22_scMPM_total_pm_MELAS_q5_q95.pdf", width = 3, height = 3)
-ggsave(plot = P1.leg, filename = "../plot/22_scMPM_total_pm_MELAS_leg_q5_q95.pdf", width = 3, height = 3)
+ggsave(plot = P1.nl, filename = "../plot/Fig6b_22_scmtMPM_total_pm_MELAS_q5_q95.pdf", width = 3, height = 3)
+ggsave(plot = P1.leg, filename = "../plot/Fig6b_22_scmtMPM_total_pm_MELAS_leg_q5_q95.pdf", width = 3, height = 3)
 
 # Generate P2 plot
 P2 <- generate_plot(
   combined_data,
   metric = MSS_weighted,
   y_label = "Total scwMSS",
-  file_prefix = "../plot/22_scwMSS_total_pm_MELAS"
+  file_prefix = "../plot/Fig6b_22_scwMSS_total_pm_MELAS"
 )
 P2.nl <- P2 + Seurat::NoLegend()
 P2.leg <- ggpubr::get_legend(P2) %>% ggpubr::as_ggplot()
 
 # Save P2 plots
-ggsave(plot = P2.nl, filename = "../plot/22_scwMSS_total_pm_MELAS_q5_q95.pdf", width = 3, height = 3)
+ggsave(plot = P2.nl, filename = "../plot/Fig6b_22_scwMSS_total_pm_MELAS_q5_q95.pdf", width = 3, height = 3)
 
 
 # Visulization
@@ -101,7 +101,7 @@ scale_y_continuous(trans = log2_trans(),
                   labels = trans_format("log2", math_format(2^.x))) + 
 labs(y = bquote(paste(log[2], "(Weighted MSS + 0.01)"))) + Seurat::NoLegend()
 p112
-ggsave(plot = p112, "../plot/22_scwMSS_complex_MELAS_q5_q95.pdf", width=6, height=4)
+ggsave(plot = p112, "../plot/Fig7b_24_scwMSS_complex_MELAS_q5_q95.pdf", width=6, height=4)
 
 
 p13 <- scmtMMB_ex %>% 
@@ -125,7 +125,7 @@ p13 <- scmtMMB_ex %>%
                      labels = trans_format("log2", math_format(2^.x))) + 
   labs(y = bquote(paste(log[2], "(Weighted MSS + 0.01)"))) + Seurat::NoLegend()
 p13
-ggsave(plot = p13, "../plot/23_scwMSS_gene_MELAS_ex3243_q5_q95.pdf", width=10, height=6)
+ggsave(plot = p13, "../plot/Fig7c_24_scwMSS_gene_MELAS_ex3243_q5_q95.pdf", width=10, height=6)
 
 p14 <- scmtMMB_ex %>% dplyr::filter(symbol %in% c("MT_ND3", "MT_ND4L")) %>%
   group_by(sample, symbol) %>%
@@ -146,7 +146,7 @@ p14 <- scmtMMB_ex %>% dplyr::filter(symbol %in% c("MT_ND3", "MT_ND4L")) %>%
                      breaks = trans_breaks("log2", function(x) 2^x), 
                      labels = trans_format("log2", math_format(2^.x))) + 
   labs(y = bquote(paste(log[2], "(Weighted MSS + 0.01)"))) + Seurat::NoLegend()
-ggsave(plot = p14, "../plot/23_scwMSS_ND3_4L_MELAS_ex3243_q5_q95.pdf", width=4, height=2)
+ggsave(plot = p14, "../plot/Fig7c_24_scwMSS_ND3_4L_MELAS_ex3243_q5_q95.pdf", width=4, height=2)
 
 
 ## Mutations per MB
@@ -172,7 +172,7 @@ P212 <- scmtMMB %>% dplyr::filter(symbol %in% c("tRNA", "CIII", "CV", "CIV", "CI
   labs(y = bquote(paste(log[10], "(Mutation per MB + 1)"))) +
   theme_1_nogrid + Seurat::NoLegend()
 P212
-ggsave(plot = P212, "../plot/22_scMMB_complex_MELAS_q5_95.pdf", width=6, height=4)
+ggsave(plot = P212, "../plot/Fig7b_24_scMMB_complex_MELAS_q5_95.pdf", width=6, height=4)
 
 p23 <- scmtMMB_ex %>% 
   dplyr::filter(symbol %ni% c("tRNA", "CIII", "CV", "CIV", "CI", "rRNA", "Total") & !grepl("MT_T",symbol)) %>%
@@ -195,7 +195,7 @@ p23 <- scmtMMB_ex %>%
   labs(y = bquote(paste(log[10], "(Mutation per MB + 1)"))) +
   theme_1_nogrid+ Seurat::NoLegend() 
 
-ggsave(plot = p23, "../plot/23_scMMB_gene_MELAS_ex3243_q5_q95.pdf", width=10, height=6)
+ggsave(plot = p23, "../plot/23_scmtMPM_gene_MELAS_ex3243_q5_q95.pdf", width=10, height=6)
 
 p24 <- scmtMMB_ex %>% dplyr::filter(symbol %in% c("MT_ND4L", "MT_ND3")) %>%
   group_by(sample, symbol) %>%
@@ -217,7 +217,7 @@ p24 <- scmtMMB_ex %>% dplyr::filter(symbol %in% c("MT_ND4L", "MT_ND3")) %>%
   labs(y = bquote(paste(log[10], "(Mutation per MB + 1)"))) +
   theme_1_nogrid+ Seurat::NoLegend() 
 
-ggsave(plot = p24, "../plot/23_scMMB_ND3_4L_MELAS_ex3243_q5_q95.pdf", width=4, height=2)
+ggsave(plot = p24, "../plot/Fig7c_24_scmtMPM_ND3_4L_MELAS_ex3243_q5_q95.pdf", width=4, height=2)
 
 
 scmtMMB %>% dplyr::filter(symbol %in% c("tRNA", "CIII", "CV", "CIV", "CI", "rRNA")) %>%
@@ -247,8 +247,8 @@ lapply(c("CI", "CIII", "CIV", "CV", "tRNA", "rRNA", "Total"), function(cat){
     theme(aspect.ratio=1) # +  ggtitle(paste0("MpMB_", cat)) 
   p1.nl <- p1 + theme_void() + Seurat::NoLegend() 
   p1.leg <- ggpubr::get_legend(p1) %>% ggpubr::as_ggplot()
-  ggsave(plot = p1.nl, paste0("../plot/2_MpMB_UMAP_ex3243/MpMB_", cat,".pdf"), width = 4, height = 6)
-  ggsave(plot = p1.leg, paste0("../plot/2_MpMB_UMAP_ex3243/MpMB_", cat,".leg.pdf"), width = 3, height = 2)
+  ggsave(plot = p1.nl, paste0("../plot/Fig6c_2_MpMB_UMAP_ex3243/MpMB_", cat,".pdf"), width = 4, height = 6)
+  ggsave(plot = p1.leg, paste0("../plot/Fig6c_2_MpMB_UMAP_ex3243/MpMB_", cat,".leg.pdf"), width = 3, height = 2)
   
   
   p2 <- ggplot(df %>% arrange(MSS_weighted), aes(x = refUMAP_1, y = refUMAP_2)) +
@@ -260,8 +260,8 @@ lapply(c("CI", "CIII", "CIV", "CV", "tRNA", "rRNA", "Total"), function(cat){
   
   p2.nl <- p2 + theme_void() + Seurat::NoLegend()
   p2.leg <- ggpubr::get_legend(p2) %>% ggpubr::as_ggplot()
-  ggsave(plot = p2.nl, paste0("../plot/2_MSSw_UMAP_ex3243/MSSw_", cat,".pdf"), width = 4, height = 6)
-  ggsave(plot = p2.leg, paste0("../plot/2_MSSw_UMAP_ex3243/MSSw_", cat,".leg.pdf"), width = 3, height = 2)
+  ggsave(plot = p2.nl, paste0("../plot/Fig6c_2_MSSw_UMAP_ex3243/MSSw_", cat,".pdf"), width = 4, height = 6)
+  ggsave(plot = p2.leg, paste0("../plot/Fig6c_2_MSSw_UMAP_ex3243/MSSw_", cat,".leg.pdf"), width = 3, height = 2)
   
 }) 
 

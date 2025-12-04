@@ -11,7 +11,7 @@ color_vec <- c("CTRL" = "#2780FF", "KI36" = "#960096", "KIA2" = "#000090")
 
 # Load the seurat object
 mtVar.bulk.df <- read.csv("../output/2_mtVar.bulk.meta.csv", row.names = "X")
-CTRL_dnV <- mtVar.bulk.df %>% filter(occurrence == "de-novo" & condition == "CTRL") %>% pull(variant)
+CTRL_dnV <- mtVar.bulk.df %>% filter(occurrence == "Line-specific" & condition == "CTRL") %>% pull(variant)
 KI36_dnV <- mtVar.bulk.df %>% filter(occurrence != "Parental" & condition == "KI36") %>% pull(variant)
 KIA2_dnV <- mtVar.bulk.df %>% filter(occurrence != "Parental" & condition == "KIA2") %>% pull(variant)
 

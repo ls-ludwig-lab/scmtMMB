@@ -4,12 +4,9 @@
 setwd("~/Ludwig_lab/scmtMMB/POLG_HEK/code/")
 library(data.table)
 library(dplyr)
-library(Seurat)
-library(Signac)
 library(BuenColors)
 library(ggh4x)
 '%ni%' <- Negate('%in%')
-source("../../global_func/variant_calling.R")
 
 # Construct trinucleotide context
 refallele <- read.csv("../../database/refallele.csv")
@@ -59,31 +56,17 @@ mtVar.bulk.df <- read.csv("../output/2_mtVar.bulk.meta.csv", row.names = "X")
 CTRL_variants <- rownames(CTRL.mmat)
 KI36_variants <- rownames(KI36.mmat)
 KIA2_variants <- rownames(KIA2.mmat)
-# 
-# Parental <- mtVar.bulk.df %>% filter(occurrence == "Parental") %>% pull(variant) %>% unique()
-# KI36_private <- mtVar.bulk.df %>% filter(occurrence == "Private" & condition == "KI36") %>% pull(variant)
-# KIA2_private <- mtVar.bulk.df %>% filter(occurrence == "Private" & condition == "KIA2") %>% pull(variant)
-# POLG_variants <- mtVar.bulk.df %>% filter(occurrence == "POLG-sahred" & condition == "KIA2") %>% pull(variant) %>% unique()
 
 # Annotate with called variants
 refallele_long$KIA2 <- refallele_long$variant %in% KIA2_variants
 refallele_long$KI36 <- refallele_long$variant %in% KI36_variants
 refallele_long$CTRL <- refallele_long$variant %in% CTRL_variants
-# refallele_long$Parental <- refallele_long$variant %in% Parental
-# refallele_long$KI36P <- refallele_long$variant %in% KI36_private
-# refallele_long$KIA2P <- refallele_long$variant %in% KIA2_private
-# refallele_long$POLG <- refallele_long$variant %in% POLG_variants
-
 
 total <- dim(refallele_long)[1]
 
 total_KIA2 <- sum(refallele_long$KIA2)
 total_CTRL <- sum(refallele_long$CTRL)
 total_KI36 <- sum(refallele_long$KI36)
-# total_Parental <- sum(refallele_long$Parental)
-# total_KI36P <- sum(refallele_long$KI36P)
-# total_KIA2P <- sum(refallele_long$KIA2P)
-# total_POLG <- sum(refallele_long$POLG)
 
 prop_df <- refallele_long %>% group_by(three_plot, group_change, strand) %>%
   summarize(observed_prop_KIA2 = sum(KIA2)/total_KIA2,
@@ -93,10 +76,6 @@ prop_df <- refallele_long %>% group_by(three_plot, group_change, strand) %>%
   mutate(fc_KIA2 = observed_prop_KIA2/expected_prop,
          fc_KI36 = observed_prop_KI36/expected_prop,
          fc_CTRL = observed_prop_CTRL/expected_prop,
-         # fc_Parental = observed_prop_Parental/expected_prop,
-         # fc_KI36P = observed_prop_KI36P/expected_prop,
-         # fc_KIA2P = observed_prop_KIA2P/expected_prop,
-         # fc_POLG = observed_prop_POLG/expected_prop
          )
 
 prop_df$change_plot <- paste0(prop_df$group_change, "_", prop_df$three_plot)
@@ -115,13 +94,13 @@ CTRL.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_CTRL, yl
         axis.ticks.x=element_blank())+
   scale_fill_manual(values= c("firebrick", "dodgerblue3")) +
   theme(legend.position = "bottom") +
-  scale_y_continuous(expand = c(0,0), limits = c(0,7)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0,12.5)) +
   geom_hline(yintercept = 1, linetype =2, color = "black") +
   labs(x = "Change in nucleotide", y = "Substitution Rate (Observed/Expected)") +
   facet_nested(~group_change_plot, scales="free_x", space="free") +
   ggtitle("Mutational Signature CTRL") 
-
-ggsave(plot = CTRL.plot, width = 4, height = 2.5, filename = "../plot/31_Mutational_Signature_CTRL.pdf")
+CTRL.plot
+ggsave(plot = CTRL.plot, width = 4, height = 2.5, filename = "../plot/Fig1g_31_Mutational_Signature_CTRL.pdf")
 
 
 KI36.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KI36, ylim(0,8))) +
@@ -131,13 +110,13 @@ KI36.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KI36, yl
         axis.ticks.x=element_blank())+
   scale_fill_manual(values= c("firebrick", "dodgerblue3")) +
   theme(legend.position = "bottom") +
-  scale_y_continuous(expand = c(0,0), limits = c(0,7)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0,4.5)) +
   geom_hline(yintercept = 1, linetype =2, color = "black") +
   labs(x = "Change in nucleotide", y = "Substitution Rate (Observed/Expected)") +
   facet_nested(~group_change_plot, scales="free_x", space="free") +
   ggtitle("Mutational Signature KI36")#, subtitle = "Cosine Similarity (CTRL) = 0.829")
-
-ggsave(plot = KI36.plot, width = 4, height = 2.5, filename = "../plot/31_Mutational_Signature_KI36.pdf")
+KI36.plot
+ggsave(plot = KI36.plot, width = 4, height = 2.5, filename = "../plot/Fig1g_31_Mutational_Signature_KI36.pdf")
 
 KIA2.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KIA2, ylim(0,8))) +
   geom_bar(stat = "identity", position = "dodge") + pretty_plot() + L_border() + 
@@ -146,61 +125,16 @@ KIA2.plot <- ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KIA2, yl
         axis.ticks.x=element_blank())+
   scale_fill_manual(values= c("firebrick", "dodgerblue3")) +
   theme(legend.position = "bottom") +
-  scale_y_continuous(expand = c(0,0), limits = c(0,7)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0,4.5)) +
   geom_hline(yintercept = 1, linetype =2, color = "black") +
   labs(x = "Change in nucleotide", y = "Substitution Rate (Observed/Expected)") +
   facet_nested(~group_change_plot, scales="free_x", space="free") +
   ggtitle("Mutational Signature KIA2")#, subtitle = "Cosine Similarity (CTRL) = 0.953")
-
-ggsave(plot = KIA2.plot, width = 4, height = 2.5, filename = "../plot/31_Mutational_Signature_KIA2.pdf")
+KIA2.plot
+ggsave(plot = KIA2.plot, width = 4, height = 2.5, filename = "../plot/Fig1g_31_Mutational_Signature_KIA2.pdf")
 
 # Cosine similarity
 lsa::cosine(prop_df$observed_prop_CTRL, prop_df$observed_prop_KI36)
 lsa::cosine(prop_df$observed_prop_CTRL, prop_df$observed_prop_KIA2)
 lsa::cosine(prop_df$observed_prop_KI36, prop_df$observed_prop_KIA2)
-
-
-
-
-
-# lsa::cosine(prop_df$observed_prop_KI36, prop_df$observed_prop_KI36P)
-# lsa::cosine(prop_df$observed_prop_KIA2, prop_df$observed_prop_KIA2P)
-# ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KI36P, ylim(0,8))) +
-#   geom_bar(stat = "identity", position = "dodge") + pretty_plot() + L_border() + 
-#   theme(axis.title.x=element_blank(),
-#         axis.text.x=element_blank(),
-#         axis.ticks.x=element_blank())+
-#   scale_fill_manual(values= c("firebrick", "dodgerblue3")) +
-#   theme(legend.position = "bottom") +
-#   scale_y_continuous(expand = c(0,0), limits = c(0,7)) +
-#   geom_hline(yintercept = 1, linetype =2, color = "black") +
-#   labs(x = "Change in nucleotide", y = "Substitution Rate (Observed/Expected)") +
-#   facet_nested(~group_change_plot, scales="free_x", space="free") +
-#   ggtitle("Mutational Signature KI36P") 
-# 
-# ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_KIA2P, ylim(0,8))) +
-#   geom_bar(stat = "identity", position = "dodge") + pretty_plot() + L_border() + 
-#   theme(axis.title.x=element_blank(),
-#         axis.text.x=element_blank(),
-#         axis.ticks.x=element_blank())+
-#   scale_fill_manual(values= c("firebrick", "dodgerblue3")) +
-#   theme(legend.position = "bottom") +
-#   scale_y_continuous(expand = c(0,0), limits = c(0,7)) +
-#   geom_hline(yintercept = 1, linetype =2, color = "black") +
-#   labs(x = "Change in nucleotide", y = "Substitution Rate (Observed/Expected)") +
-#   facet_nested(~group_change_plot, scales="free_x", space="free") +
-#   ggtitle("Mutational Signature KIA2P") 
-# 
-# ggplot(prop_df, aes(x = change_plot, fill = strand, y = fc_POLG, ylim(0,8))) +
-#   geom_bar(stat = "identity", position = "dodge") + pretty_plot() + L_border() + 
-#   theme(axis.title.x=element_blank(),
-#         axis.text.x=element_blank(),
-#         axis.ticks.x=element_blank())+
-#   scale_fill_manual(values= c("firebrick", "dodgerblue3")) +
-#   theme(legend.position = "bottom") +
-#   scale_y_continuous(expand = c(0,0), limits = c(0,7)) +
-#   geom_hline(yintercept = 1, linetype =2, color = "black") +
-#   labs(x = "Change in nucleotide", y = "Substitution Rate (Observed/Expected)") +
-#   facet_nested(~group_change_plot, scales="free_x", space="free") +
-#   ggtitle("Mutational Signature POLG") 
 

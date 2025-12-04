@@ -172,7 +172,7 @@ lapply(1:3, function(x){
     sub10 <- as.data.frame(t(test_radial_plot_above_0)) %>% 
               select(`B cell`, `CD4 Eff/Mem`, `CD4 Naive`, `CD8 Eff/Mem`, `CD8 Naive`, `Monocyte/DC`, `NK/ILC`)
     
-    pdf(paste0("../plot/26_", df_meta[x,1],"_",df_meta[x,2], "_radial_plot.pdf"), width = 4, height = 4)
+    pdf(paste0("../plot/Fig7d_26_", df_meta[x,1],"_",df_meta[x,2], "_radial_plot.pdf"), width = 4, height = 4)
     
     radarchart(subdata, 
                cglty = 1,       

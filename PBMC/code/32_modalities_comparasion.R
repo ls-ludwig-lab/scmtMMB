@@ -69,8 +69,8 @@ p2 <- p1 + Seurat::NoLegend()
 leg <- ggpubr::get_legend(p1)
 p3 <- ggpubr::as_ggplot(leg)
 
-ggsave("../plot/32_H5_mtDNA_mtRNA_cov.pdf", p2, width = 5, height = 5)
-ggsave("../plot/32_H5_mtDNA_mtRNA_cov_leg.pdf", p3, width = 5, height = 5)
+ggsave("../plot/Ext_Fig12_32_H5_mtDNA_mtRNA_cov.pdf", p2, width = 5, height = 5)
+ggsave("../plot/Ext_Fig12_32_H5_mtDNA_mtRNA_cov_leg.pdf", p3, width = 5, height = 5)
 
 
 # number of mutations
@@ -87,6 +87,6 @@ p5 <- vaf.df %>%
   ggplot(aes(x = 1, y = weights))+
   geom_violin() +theme_classic()
 
-ggsave("../plot/32_H5_mtDNA_mtRNA_mutation_counts.pdf", p4, width = 5, height = 5)
+ggsave("../plot/Ext_Fig12_32_H5_mtDNA_mtRNA_mutation_counts.pdf", p4, width = 5, height = 5)
 p4
-ggsave("../plot/32_H5_mtDNA_mtRNA_mutation_weighs.pdf", p5, width = 1.5, height = 2)
+ggsave("../plot/Ext_Fig12_32_H5_mtDNA_mtRNA_mutation_weighs.pdf", p5, width = 1.5, height = 2)
